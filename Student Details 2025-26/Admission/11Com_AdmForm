@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Responsive Webpage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .card {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      font-size: 48px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+	
+	  a {
+      text-decoration: none; /* Removes the underline */
+      color: inherit; /* Inherits the color from the parent element */
+      display: block; /* Makes the entire content of the card clickable */
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #666;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; padding: 10px; background-color: #4CAF50; color: white;">
+    <h2>Admission Form</h2>
+  </header>
+  <main>
+    <div class="container">
+      <div class="card">
+    <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Commerce.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Commerce</div>
+    </a>
+  </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Commerce.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Commerce</div>
+    </a>
+      </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Science.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Science</div>
+    </a>
+      </div>
+      <div class="card">
+	 <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Science.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Science</div>
+    </a>
+      </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Arts.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Arts</div>
+    </a>
+      </div>
+	  <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Arts.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Arts</div>
+    </a>
+      </div>
+    </div>
+	
+	<header style="text-align: center; padding: 10px; background-color: #4CAF50; color: white;">
+    <h2>Admission Form Details</h2>
+  </header>
+  <main>
+    <div class="container">
+      <div class="card">
+    <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Commerce.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Commerce</div>
+    </a>
+  </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Commerce.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Commerce</div>
+    </a>
+      </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Science.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Science</div>
+    </a>
+      </div>
+      <div class="card">
+	 <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Science.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Science</div>
+    </a>
+      </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Arts.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">11th Arts</div>
+    </a>
+      </div>
+	  <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Arts.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">12th Arts</div>
+    </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
