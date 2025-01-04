@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enquiry Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .blur {
+      filter: blur(8px);
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+	.popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .popup input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .popup button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .popup button:hover {
+      background-color: #45a049;
+    }
+
+    .card {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon {
+      font-size: 48px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+	
+	  a {
+      text-decoration: none; /* Removes the underline */
+      color: inherit; /* Inherits the color from the parent element */
+      display: block; /* Makes the entire content of the card clickable */
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #666;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="overlay" id="overlay" style="display: none;"></div>
+  <div class="popup" id="popup" style="display: none;">
+    <h2>Enter Passcode</h2>
+    <input type="password" id="passcode" placeholder="Enter Passcode">
+    <button onclick="checkPasscode()">Submit</button>
+  </div>
+  <header style="text-align: center; padding: 10px; background-color: #4CAF50; color: white;">
+    <h2>Enquiry Details</h2>
+  </header>
+  <main>
+    <div class="container">
+      <div class="card">
+    <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/EnqForm.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">Enquiry Form</div>
+    </a>
+  </div>
+      <div class="card">
+	  <a href="#">
+    <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/EnqDetails.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
+  <div class="name">Enquiry Details</div>
+    </a>
+      </div>
+	  </main>
+	<script>
+    const PASSCODE = 'Trends123';
+    const TIME_LIMIT = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+    function showPopup() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('mainContent').classList.add('blur');
+    }
+
+    function hidePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('mainContent').classList.remove('blur');
+    }
+
+    function checkPasscode() {
+      const enteredPasscode = document.getElementById('passcode').value;
+      if (enteredPasscode === PASSCODE) {
+        const currentTime = new Date().getTime();
+        localStorage.setItem('lastPasscodeTime', currentTime);
+        hidePopup();
+      } else {
+        alert('Incorrect passcode. Please try again.');
+      }
+    }
+
+    function init() {
+      const lastPasscodeTime = localStorage.getItem('lastPasscodeTime');
+      const currentTime = new Date().getTime();
+      if (!lastPasscodeTime || currentTime - lastPasscodeTime > TIME_LIMIT) {
+        showPopup();
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
