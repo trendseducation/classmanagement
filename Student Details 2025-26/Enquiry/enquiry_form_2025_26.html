@@ -78,6 +78,9 @@
     </style>
   </head>
   <body>
+	  	  <div id="spinner">
+    <div class="spinner"></div>
+  </div>
     <div class="container">
       <div class="form-container">
         <h4 class="text-center mb-4">Enquiry Information Form</h4>
@@ -329,6 +332,11 @@
     }
   });	
     window.onload = init;
+    // Show spinner on page load and hide when loaded
+    window.addEventListener('load', () => {
+      const spinner = document.getElementById('spinner');
+      spinner.style.display = 'none';
+    });	
 </script>
   </body>
 </html>
