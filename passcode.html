@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Passcode</title>
+    <title>Passcode Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,28 +52,33 @@
             background-color: #3700b3;
         }
     </style>
-</head>
-<body>
-    <div class="passcode-container" style= "justify-content: center; align-items: center;">
-        <h1>Enter Passcode</h1>
-        <input type="password" id="passcode" placeholder="Enter Passcode" />
-        <button onclick="verifyPasscode()">Submit</button>
-    </div>
-
     <script>
-        function verifyPasscode() {
-            const passcode = document.getElementById('passcode').value;
-            if (passcode === 'Trends123') {
+        const PASSCODE = 'Trends123';
+
+        function authenticate() {
+            const passcodeInput = document.getElementById('passcode').value;
+
+            if (passcodeInput === PASSCODE) {
+                // Store authentication status and expiration in localStorage
                 const now = new Date().getTime();
-                const expirationTime = now + 10 * 60 * 1000; // 10 minutes in milliseconds
+                const expiration = now + 10 * 60 * 1000; // 10 minutes
                 localStorage.setItem('authenticated', 'true');
-                localStorage.setItem('expiration', expirationTime); // Set expiration time
-                alert('Passcode verified! Redirecting...');
-                window.location.href = 'index.html'; // Redirect to main page
+                localStorage.setItem('expiration', expiration);
+
+                // Redirect to the previous page or default to index.html
+                const referrer = document.referrer || 'index.html';
+                location.href = referrer;
             } else {
-                alert('Incorrect Passcode. Please try again.');
+                alert('Invalid passcode. Please try again.');
             }
         }
     </script>
+</head>
+<body>
+	<div class="passcode-container" style= "justify-content: center; align-items: center;">
+        <h1>Enter Passcode</h1>
+        <input type="password" id="passcode" placeholder="Enter Passcode" />
+        <button onclick="authenticate()">Submit</button>
+    </div>
 </body>
 </html>
