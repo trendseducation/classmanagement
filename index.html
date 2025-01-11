@@ -114,13 +114,6 @@
   </style>
 </head>
 <body>
-  <div class="overlay" id="overlay" style="display: none;"></div>
-  <div class="popup" id="popup" style="display: none;">
-    <h2>Enter Passcode</h2>
-    <input type="password" id="passcode" placeholder="Enter Passcode">
-    <button onclick="checkPasscode()">Submit</button>
-  </div>
-
   <header style="text-align: center; padding: 16px; background-color: #4CAF50; color: white;">
     <h1>Details Form select</h1>
   </header>
@@ -160,39 +153,31 @@
   </main>
 
   <script>
-    const PASSCODE = 'Trends123';
-    const TIME_LIMIT = 5 * 60 * 1000; // 5 minutes in milliseconds
+    // passcode Function
+		function checkAuthentication() {
+            const authenticated = localStorage.getItem('authenticated');
+            const expiration = localStorage.getItem('expiration');
+            const now = new Date().getTime();
 
-    function showPopup() {
-      document.getElementById('popup').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-      document.getElementById('mainContent').classList.add('blur');
-    }
+            if (authenticated !== 'true' || !expiration || now > expiration) {
+                // Clear authentication and redirect to Passcode Page
+                localStorage.removeItem('authenticated');
+                localStorage.removeItem('expiration');
+                alert('Session expired. Please re-enter the passcode.');
+                window.location.href = 'passcode.html';
+            } else {
+                // Extend session expiration by 10 minutes on activity
+                const newExpiration = now + 10 * 60 * 1000; // Extend session by 10 minutes
+                localStorage.setItem('expiration', newExpiration);
+            }
+        }
 
-    function hidePopup() {
-      document.getElementById('popup').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('mainContent').classList.remove('blur');
-    }
+        // Check authentication on page load
+        window.onload = checkAuthentication;
 
-    function checkPasscode() {
-      const enteredPasscode = document.getElementById('passcode').value;
-      if (enteredPasscode === PASSCODE) {
-        const currentTime = new Date().getTime();
-        localStorage.setItem('lastPasscodeTime', currentTime);
-        hidePopup();
-      } else {
-        alert('Incorrect passcode. Please try again.');
-      }
-    }
-
-    function init() {
-      const lastPasscodeTime = localStorage.getItem('lastPasscodeTime');
-      const currentTime = new Date().getTime();
-      if (!lastPasscodeTime || currentTime - lastPasscodeTime > TIME_LIMIT) {
-        showPopup();
-      }
-    }
+        // Extend session on user activity
+        document.addEventListener('mousemove', () => checkAuthentication());
+        document.addEventListener('keydown', () => checkAuthentication());
 
     window.onload = init;
   </script>
