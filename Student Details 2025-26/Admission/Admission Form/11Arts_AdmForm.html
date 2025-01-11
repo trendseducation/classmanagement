@@ -284,7 +284,9 @@
                 // Clear authentication and redirect to Passcode Page
                 localStorage.removeItem('authenticated');
                 localStorage.removeItem('expiration');
-                alert('Session expired. Please re-enter the passcode.');
+                 const userConfirmed = confirm('Session expired. Click OK to re-enter the passcode.');
+                if (userConfirmed) {
+                    // Redirect to the current page to trigger the authentication process
                 window.location.href = 'https://trendseducation.github.io/classmanagement/passcode.html';
             } else {
                 // Extend session expiration by 10 minutes on activity
