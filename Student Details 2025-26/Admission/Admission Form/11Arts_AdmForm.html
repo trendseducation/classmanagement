@@ -290,7 +290,7 @@
                 window.location.href = 'https://trendseducation.github.io/classmanagement/passcode.html';
             } else {
                 // Extend session expiration by 10 minutes on activity
-                const newExpiration = now + 10 * 60 * 1000; // Extend session by 10 minutes
+                const newExpiration = now + 1 * 60 * 1000; // Extend session by 10 minutes
                 localStorage.setItem('expiration', newExpiration);
             }
         }
