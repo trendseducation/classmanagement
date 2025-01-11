@@ -273,7 +273,34 @@
       e.target.value = ""; // Reset the file input
     }
   });
-  
+
+		 // passcode Function
+		function checkAuthentication() {
+            const authenticated = localStorage.getItem('authenticated');
+            const expiration = localStorage.getItem('expiration');
+            const now = new Date().getTime();
+
+            if (authenticated !== 'true' || !expiration || now > expiration) {
+                // Clear authentication and redirect to Passcode Page
+                localStorage.removeItem('authenticated');
+                localStorage.removeItem('expiration');
+                alert('Session expired. Please re-enter the passcode.');
+                window.location.href = 'passcode.html';
+            } else {
+                // Extend session expiration by 10 minutes on activity
+                const newExpiration = now + 10 * 60 * 1000; // Extend session by 10 minutes
+                localStorage.setItem('expiration', newExpiration);
+            }
+        }
+
+        // Check authentication on page load
+        window.onload = checkAuthentication;
+
+        // Extend session on user activity
+        document.addEventListener('mousemove', () => checkAuthentication());
+        document.addEventListener('keydown', () => checkAuthentication());
+		 
+    window.onload = init;
 </script>
 
 <style>
