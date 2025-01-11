@@ -61,7 +61,7 @@
             if (passcodeInput === PASSCODE) {
                 // Store authentication status and expiration in localStorage
                 const now = new Date().getTime();
-                const expiration = now + 10 * 60 * 1000; // 10 minutes
+                const expiration = now + 1 * 60 * 1000; // 10 minutes
                 localStorage.setItem('authenticated', 'true');
                 localStorage.setItem('expiration', expiration);
 
