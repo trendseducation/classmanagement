@@ -1,6 +1,6 @@
 (function () {
-    const PASSCODE_PAGE = 'passcode.html'; // Redirect page
-    const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const PASSCODE_PAGE = 'https://trendseducation.github.io/classmanagement/passcode.html'; // Redirect page
+    const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
     // Function to check authentication
     function checkAuthentication() {
