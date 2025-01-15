@@ -51,16 +51,42 @@
         .passcode-container button:hover {
             background-color: #3700b3;
         }
+	    /* Spinner styling */
+    #spinner {
+      display: none;
+      border: 8px solid #6b6a6a;
+      border-top: 8px solid #33ff00;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      position: absolute;
+      top: 45%;
+      left: 45%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+      )
     </style>
     <script>
         const appScriptURL = "https://script.google.com/macros/s/AKfycbyuAvhSmCOuPhFO-UVykElzpCo6GNBMfw6Gr_f9z6-Fw4zmuyrH31veeHUhhwAhPsOt/exec";
-const TIMEOUT_DURATION = 10 * 1000; // 20 seconds session timeout for demo
+const TIMEOUT_DURATION = 10 * 1000; // 20 seconds session timeout
 const PASSCODE_PAGE_URL = "passcode.html";
 const DEFAULT_PAGE_URL = "index.html"; // Default page to redirect if no referrer
 
-// Authenticate the user by fetching the passcode from Google Spreadsheet
+// Function to handle authentication after submitting passcode
 async function authenticate() {
   const passcodeInput = document.getElementById("passcode").value;
+
+  // Show the spinner while the data is being fetched
+  document.getElementById("spinner").style.display = "block";
 
   try {
     // Fetch the passcode from App Script
@@ -69,6 +95,9 @@ async function authenticate() {
       throw new Error("Failed to fetch passcode.");
     }
     const fetchedPasscode = await response.text();
+
+    // Hide the spinner after the request completes
+    document.getElementById("spinner").style.display = "none";
 
     // Check if the input matches the fetched passcode
     if (passcodeInput === fetchedPasscode) {
@@ -86,6 +115,7 @@ async function authenticate() {
     }
   } catch (error) {
     console.error("Error during passcode validation:", error);
+    document.getElementById("spinner").style.display = "none"; // Hide spinner on error
     alert("An error occurred. Please try again later.");
   }
 }
@@ -140,6 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+
     </script>
 </head>
 <body>
@@ -148,5 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <input type="password" id="passcode" placeholder="Enter Passcode" />
         <button onclick="authenticate()">Submit</button>
     </div>
+	<!-- Spinner (initially hidden) -->
+  <div id="spinner"></div>
 </body>
 </html>
