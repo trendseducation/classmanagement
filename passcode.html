@@ -55,8 +55,8 @@
     <script>
         const appScriptURL = "https://script.google.com/macros/s/AKfycbyuAvhSmCOuPhFO-UVykElzpCo6GNBMfw6Gr_f9z6-Fw4zmuyrH31veeHUhhwAhPsOt/exec";
 const TIMEOUT_DURATION = 10 * 1000; // 20 seconds session timeout for demo
-const PROTECTED_PAGE_URL = "practice3.html";
 const PASSCODE_PAGE_URL = "passcode.html";
+const DEFAULT_PAGE_URL = "index.html"; // Default page to redirect if no referrer
 
 // Authenticate the user by fetching the passcode from Google Spreadsheet
 async function authenticate() {
@@ -78,10 +78,9 @@ async function authenticate() {
       localStorage.setItem("authenticated", "true");
       localStorage.setItem("expiration", expiration);
 
-      // Redirect to the previous page or default to the protected page
-      const redirectURL = localStorage.getItem("timeoutRedirectURL") || PROTECTED_PAGE_URL;
-      localStorage.removeItem("timeoutRedirectURL"); // Clean up stored redirect
-      location.href = redirectURL;
+      // Redirect to the previous page or default to index.html
+      const referrer = document.referrer || DEFAULT_PAGE_URL;
+      location.href = referrer;
     } else {
       alert("Invalid passcode. Please try again.");
     }
@@ -135,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // On protected pages, check authentication and start session timeout
-  if (window.location.pathname.endsWith(PROTECTED_PAGE_URL)) {
+  if (window.location.pathname.endsWith(DEFAULT_PAGE_URL)) {
     checkAuthentication(); // Ensure the user is authenticated
     startSessionTimeout(); // Start session timeout countdown
   }
