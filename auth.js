@@ -1,6 +1,6 @@
 (function () {
     const PASSCODE_PAGE = 'passcode.html'; // Redirect page
-    const SESSION_TIMEOUT = 10 * 1000; // 10 minutes in milliseconds
+    const SESSION_TIMEOUT = 2 * 60 * 1000; // 10 minutes in milliseconds
 
     // Function to check authentication
     function checkAuthentication() {
