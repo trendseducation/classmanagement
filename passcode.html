@@ -53,25 +53,94 @@
         }
     </style>
     <script>
-        const PASSCODE = 'Trends123';
+        const appScriptURL = "https://script.google.com/macros/s/AKfycbyuAvhSmCOuPhFO-UVykElzpCo6GNBMfw6Gr_f9z6-Fw4zmuyrH31veeHUhhwAhPsOt/exec";
+const TIMEOUT_DURATION = 20 * 1000; // 20 seconds session timeout for demo
+const PROTECTED_PAGE_URL = "practice3.html";
+const PASSCODE_PAGE_URL = "passcode.html";
 
-        function authenticate() {
-            const passcodeInput = document.getElementById('passcode').value;
+// Authenticate the user by fetching the passcode from Google Spreadsheet
+async function authenticate() {
+  const passcodeInput = document.getElementById("passcode").value;
 
-            if (passcodeInput === PASSCODE) {
-                // Store authentication status and expiration in localStorage
-                const now = new Date().getTime();
-                const expiration = now + 1 * 60 * 1000; // 10 minutes
-                localStorage.setItem('authenticated', 'true');
-                localStorage.setItem('expiration', expiration);
+  try {
+    // Fetch the passcode from App Script
+    const response = await fetch(`${appScriptURL}?action=getPasscode`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch passcode.");
+    }
+    const fetchedPasscode = await response.text();
 
-                // Redirect to the previous page or default to index.html
-                const referrer = document.referrer || 'index.html';
-                location.href = referrer;
-            } else {
-                alert('Invalid passcode. Please try again.');
-            }
-        }
+    // Check if the input matches the fetched passcode
+    if (passcodeInput === fetchedPasscode) {
+      // Store authentication status and session expiration
+      const now = new Date().getTime();
+      const expiration = now + TIMEOUT_DURATION; // Set session expiration
+      localStorage.setItem("authenticated", "true");
+      localStorage.setItem("expiration", expiration);
+
+      // Redirect to the previous page or default to the protected page
+      const redirectURL = localStorage.getItem("timeoutRedirectURL") || PROTECTED_PAGE_URL;
+      localStorage.removeItem("timeoutRedirectURL"); // Clean up stored redirect
+      location.href = redirectURL;
+    } else {
+      alert("Invalid passcode. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error during passcode validation:", error);
+    alert("An error occurred. Please try again later.");
+  }
+}
+
+// Check authentication status on page load
+function checkAuthentication() {
+  const authenticated = localStorage.getItem("authenticated") === "true";
+  const expiration = parseInt(localStorage.getItem("expiration"), 10);
+  const now = new Date().getTime();
+
+  // If session is expired or not authenticated, redirect to passcode page
+  if (!authenticated || now > expiration) {
+    localStorage.setItem("timeoutRedirectURL", window.location.href); // Save current page for redirection
+    location.href = PASSCODE_PAGE_URL;
+  }
+}
+
+// Start session timeout countdown
+function startSessionTimeout() {
+  const expiration = parseInt(localStorage.getItem("expiration"), 10);
+  const now = new Date().getTime();
+  const remainingTime = expiration - now;
+
+  // If time has already expired, redirect immediately
+  if (remainingTime <= 0) {
+    alert("Session expired. Redirecting to Passcode page.");
+    location.href = PASSCODE_PAGE_URL;
+    return;
+  }
+
+  // Set a timeout for the remaining session duration
+  setTimeout(() => {
+    alert("Session expired. Redirecting to Passcode page.");
+    location.href = PASSCODE_PAGE_URL;
+  }, remainingTime);
+}
+
+// Handle form submission on passcode page
+document.addEventListener("DOMContentLoaded", () => {
+  const passcodeForm = document.getElementById("passcode-form");
+  if (passcodeForm) {
+    passcodeForm.addEventListener("submit", (event) => {
+      event.preventDefault(); // Prevent form default submission
+      authenticate(); // Call the authentication function
+    });
+  }
+
+  // On protected pages, check authentication and start session timeout
+  if (window.location.pathname.endsWith(PROTECTED_PAGE_URL)) {
+    checkAuthentication(); // Ensure the user is authenticated
+    startSessionTimeout(); // Start session timeout countdown
+  }
+});
+
     </script>
 </head>
 <body>
