@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Form</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: auto;
+        margin-top: 50px;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #fff;
+      }
+      .progress-circle {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+      }
+	  .form-control:focus {
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        border-color: #007bff;
+      }
+	  .calendar-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #007bff;
+        cursor: pointer;
+      }
+	  <! -- >Experience CSS -->
+	  h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        label {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: block;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .form-section {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+	  
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="form-container">
+        <h4 class="text-center mb-4">Teacher Details Form</h4>
+        <form id="submit">
+		
+		<div class="form-group">
+            <label for="text_dropdown">Academic Year:<span style="color: red;">*</span></label>
+            <select class="form-control" name="Academic_Year" id="text_dropdown" required>
+              <option value="" disabled selected hidden>Select</option>
+              <option value="2025-26">2025-26</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="name">Teacher Name: <span style="color: red;">*</span></label>
+            <input
+              class="form-control"
+              type="text"
+              name="Teacher_Name"
+              id="name"
+              placeholder="Enter Teacher Name"
+              required
+            />
+          </div>
+		  <div class="form-group">
+            <label for="stream">Stream: <span style="color: red;">*</span></label>
+            <select class="form-control" name="Stream" id="stream" required>
+              <option value="">Select Stream</option>
+                <option value="11th Commerce">11th Commerce</option>
+                <option value="12th Commerce">12th Commerce</option>
+                <option value="11th Science">11th Science</option>
+                <option value="12th Science">12th Science</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="Compatible_Subject">Compatible Subject Name: <span style="color: red;">*</span></label>
+            <input
+              class="form-control"
+              type="text"
+              name="Compatible_Subject"
+              id="Compatible_Subject"
+              placeholder="Enter Specialize subject Name"
+              required
+            />
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input
+              class="form-control"
+              type="email"
+              name="Email"
+              id="email"
+              placeholder="Email"
+            />
+          </div>
+          <div class="form-group">
+            <label for="Mobile_No">Mobile Number: <span style="color: red;">*</span></label>
+            <input
+              class="form-control"
+              type="tel"
+              name="Mobile_No"
+              id="Mobile_No"
+              placeholder="Enter Contact Number"
+			  pattern="^\d{10}$"
+              title="Please enter a valid 10-digit phone number"
+			  required
+            />
+          </div>
+		  <div class="form-group">
+            <label for="Alternate_Mobile_No">Alternate Mobile Number:</label>
+            <input
+              class="form-control"
+              type="tel"
+              name="Alternate_Mobile_No"
+              id="Alternate_Mobile_No"
+              placeholder="Enter Alternate Mobile Number"
+			  pattern="^\d{10}$"
+              title="Please enter a valid 10-digit phone number"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender" class="hattrick">Gender:<span style="color: red;">*</span></label>
+            <select class="form-control" name="Gender" id="gender" required>
+              <option value="">Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+			<div class="form-group">
+            <label for="email">Qualification<span style="color: red;">*</span></label>
+            <input
+              class="form-control"
+              type="text"
+              name="Qualification"
+              id="Qualification"
+              placeholder="Enter Qualification"
+			  required
+            />
+              </div>
+			  <div class="form-containerers">
+			   <label for="experience">Select Experience: <span style="color: red;">*</span></label>
+        <select id="experience" name="experience">
+            <option value="">-- Select an Option --</option>
+            <option value="experience1">Experience 1 (Require)</option>
+            <option value="experience2">Experience 2 (Optional)</option>
+            <option value="experience3">Experience 3 (Optional)</option>
+            <option value="experience4">Experience 4 (Optional)</option>
+        </select>
+
+        <div id="experience1" class="form-section hidden">
+            <label for="experience1-text">Describe Your Experience <span style="color: red;">*</span></label>
+            <input type="text" id="experience1-text" name="Experience_in_detail_1" placeholder="Type here..." Required>
+        </div>
+
+        <div id="experience2" class="form-section hidden">
+            <label for="experience2-text">Describe Your Experience</label>
+            <input type="text" id="experience2-text" name="Experience_in_detail_2" placeholder="Type here...">
+        </div>
+
+        <div id="experience3" class="form-section hidden">
+            <label for="experience3-text">Describe Your Experience</label>
+            <input type="text" id="experience3-text" name="Experience_in_detail_3" placeholder="Type here...">
+        </div>
+
+        <div id="experience4" class="form-section hidden">
+            <label for="experience4-text">Describe Your Experience</label>
+            <input type="text" id="experience4-text" name="Experience_in_detail_4" placeholder="Type here...">
+        </div>
+		</div>	  
+          <div class="form-group">
+            <label for="message">Address:<span style="color: red;">*</span></label>
+            <textarea
+              class="form-control"
+              name="Address"
+              id="address"
+              placeholder="Type Address"
+              required
+            ></textarea>
+          </div>
+		  <div class="form-group">
+            <label for="Note">Any Note:</label>
+            <textarea
+              class="form-control"
+              name="Note"
+              id="Note"
+              placeholder="Type Any Notes if Require"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Submit
+          </button>
+        </form>
+        <div class="progress-circle">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbz8dRJ0WKqGakuuUb7zaLwK1aZvSROzqjIzrW0psLEwvWfcBhOw2QONTzcx4t9TqFNVuA/exec";
+  const form = document.forms["submit"];
+  const progressCircle = document.querySelector(".progress-circle");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    progressCircle.style.display = "block";
+
+    var formData = new FormData(form);
+
+    fetch(scriptURL, { method: "POST", body: formData })
+      .then((response) => {
+        progressCircle.style.display = "none";
+        
+        // Show success popup
+        const successPopup = document.createElement("div");
+        successPopup.style.position = "fixed";
+        successPopup.style.top = "50%";
+        successPopup.style.left = "50%";
+        successPopup.style.transform = "translate(-50%, -50%)";
+        successPopup.style.backgroundColor = "green";
+        successPopup.style.color = "white";
+        successPopup.style.padding = "20px";
+        successPopup.style.borderRadius = "8px";
+        successPopup.style.textAlign = "center";
+        successPopup.style.fontSize = "16px";
+        successPopup.style.animation = "fadeIn 1s ease";
+        successPopup.innerHTML = "Submitted Successfully!";
+        
+        // Add the popup to the body
+        document.body.appendChild(successPopup);
+
+        // Close popup after 3 seconds
+        setTimeout(() => {
+          successPopup.style.animation = "fadeOut 1s ease";
+          setTimeout(() => {
+            successPopup.remove();
+          }, 1000);
+        }, 3000);
+
+        // Reset the form after submission
+        form.reset();
+      })
+      .catch((error) => {
+        progressCircle.style.display = "none";
+        swal("Error", "Something went wrong. Please try again!", "error");
+      });
+  });
+  
+  // Experience Function
+  
+  const dropdown = document.getElementById('experience');
+        const sections = document.querySelectorAll('.form-section');
+
+        dropdown.addEventListener('change', (event) => {
+            // Hide all sections
+            sections.forEach(section => section.classList.add('hidden'));
+
+            // Show the selected section
+            const selectedValue = event.target.value;
+            if (selectedValue) {
+                document.getElementById(selectedValue).classList.remove('hidden');
+            }
+        });
+</script>
+</script>
+</style>
+  </body>
+</html>
