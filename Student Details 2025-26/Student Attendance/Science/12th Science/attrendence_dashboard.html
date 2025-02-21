@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attendance Checking</title>
+  <script src="auth.js"> </script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      max-width: 500px;
+      text-align: center;
+    }
+    h2 {
+      margin-top: 0;
+      color: #5563DE;
+    }
+    .message {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    .btn {
+      background: #5563DE;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #3f50b5;
+    }
+    .spinner {
+      display: block;
+      margin: 20px auto;
+      border: 6px solid rgba(0, 0, 0, 0.1);
+      border-top: 6px solid #5563DE;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+	
+	/* Responsive adjustments */
+    @media (max-width: 600px) {
+	.btn {
+        font-size: 15px;
+        padding: 10px;
+      }
+	
+	}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Attendance Checking</h2>
+    <div id="spinner" class="spinner"></div>
+    <p id="message" class="message">Please wait...</p>
+	<!-- Add Student Button -->
+    <button id="addStudentBtn" class="btn" style="display:none;">Add Student</button>
+    <!-- Redirect Button (hidden by default) -->
+    <button id="redirectBtn" class="btn" style="display:none;">Redirect</button>
+	<div><a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Student%20Attendance/Commerce/11th%20Commerce/attendance_fontpage.html"><button id="attendancePagebtn" class="btn">Back to Attendance Page</button></a></div>
+  </div>
+  
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzTPZl94O_Xli3SzLCnqVPT8YZlhRiJPJXLv9U_zwmvTesn9Bd_MX67pbqMPNBnTBzuYA/exec"; // Replace with your deployed Apps Script URL
+
+    // Fetch today's date status from the Apps Script.
+    window.onload = function() {
+      fetch(scriptUrl + "?action=checkTodayDate")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("spinner").style.display = "none";
+          if (data.error) {
+            document.getElementById("message").textContent = "Error: " + data.error;
+            return;
+          }
+          const messageEl = document.getElementById("message");
+          const redirectBtn = document.getElementById("redirectBtn");
+          const addStudentBtn = document.getElementById("addStudentBtn");
+          
+          if (data.dateExists) {
+            messageEl.textContent = "Today's date (" + data.todayDate + ") Attendance done.";
+            redirectBtn.textContent = "Proceed to change Attendance";
+            redirectBtn.onclick = () => { window.location.href = "attendance_change.html"; };
+          } else {
+            messageEl.textContent = "Today's date (" + data.todayDate + ") Attendance not done. Please take Attendance";
+            redirectBtn.textContent = "Proceed to Attendance Submission";
+            redirectBtn.onclick = () => { window.location.href = "attendance_submission.html"; };
+          }
+          // Show both buttons now.
+          redirectBtn.style.display = "inline-block";
+          addStudentBtn.style.display = "inline-block";
+        })
+        .catch(error => {
+          document.getElementById("spinner").style.display = "none";
+          document.getElementById("message").textContent = "Error fetching data.";
+          console.error("Fetch error:", error);
+        });
+    };
+
+    // When "Add Student" button is clicked, open the popup.
+    document.getElementById("addStudentBtn").addEventListener("click", openAddStudentPopup);
+
+    function openAddStudentPopup() {
+      // Show a loading popup while fetching the current student list.
+      Swal.fire({
+        title: 'Loading...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      
+      fetch(scriptUrl + "?action=getStudentList")
+        .then(response => response.json())
+        .then(data => {
+          Swal.close(); // Close the loading popup
+          if (data.error) {
+            Swal.fire({
+              icon: 'error',
+              text: "Error fetching student list: " + data.error,
+              confirmButtonColor: '#5563DE'
+            });
+            return;
+          }
+          // Calculate new roll number as (number of students + 1)
+          const newRoll = (data.students ? data.students.length : 0) + 1;
+          // Open the add student popup using SweetAlert2.
+          Swal.fire({
+            title: 'Add New Student',
+            html: `
+              <p>Roll No: <strong>${newRoll}</strong></p>
+              <input type="text" id="studentName" class="swal2-input" placeholder="Enter student name">
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            confirmButtonColor: '#5563DE',
+            preConfirm: () => {
+              const studentName = Swal.getPopup().querySelector('#studentName').value;
+              if (!studentName) {
+                Swal.showValidationMessage(`Please enter a student name`);
+              }
+              // Show spinner in the popup before submission.
+              Swal.showLoading();
+              return { studentName: studentName, rollNo: newRoll };
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              addStudent(result.value);
+            }
+          });
+        })
+        .catch(error => {
+          Swal.close();
+          Swal.fire({
+            icon: 'error',
+            text: "Error: " + error,
+            confirmButtonColor: '#5563DE'
+          });
+        });
+    }
+
+    // Send the new student data to the Apps Script.
+    function addStudent(studentData) {
+      // Show a loading modal while adding the student.
+      Swal.fire({
+        title: 'Adding Student...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      fetch(scriptUrl + "?action=addStudent", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `studentName=${encodeURIComponent(studentData.studentName)}`
+      })
+      .then(response => response.json())
+      .then(result => {
+        Swal.close(); // Close the loading modal
+        if (result.error) {
+          Swal.fire({
+            icon: 'error',
+            text: "Error adding student: " + result.error,
+            confirmButtonColor: '#5563DE'
+          });
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: 'Student added successfully!',
+            text: `Roll No: ${result.rollNo}, Name: ${result.name}`,
+            confirmButtonColor: '#5563DE'
+          });
+        }
+      })
+      .catch(error => {
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          text: "Error: " + error,
+          confirmButtonColor: '#5563DE'
+        });
+      });
+    }
+  </script>
+</body>
+</html>
