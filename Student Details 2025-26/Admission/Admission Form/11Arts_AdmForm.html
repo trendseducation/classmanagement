@@ -3,26 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>11th Arts</title>
-	  <script src="auth.js" defer> </script>
+    <title>11th Commerce Admission Form</title>
     <link
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="auth.js"></script>
     <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #a5f0b9, #2575fc);
+        height: 230vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+      }
       .form-container {
-        max-width: 600px;
-        margin: auto;
-        margin-top: 50px;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        background-color: #fff;
+        max-width: 500px;
+        width: 90%;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .form-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 8px;
+      }
+      .form-control {
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #ced4da;
+      }
+	  .position-relative input{
+	  padding-left: 43px	  
+	  }
+	  .position-relative Select{
+	  padding-left: 40px	  
+	  }
+	  
+	  .position-relative textarea{
+	  padding-left: 40px	  
+	  }
+
+      .form-control:focus {
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        border-color: #007bff;
+      }
+      .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6a11cb;
+        font-size: 18px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       }
       .progress-circle {
         display: none;
@@ -32,35 +104,55 @@
         transform: translate(-50%, -50%);
         z-index: 1000;
       }
-	  .form-control:focus {
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        border-color: #007bff;
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
-	  .calendar-icon {
-        position: absolute;
-        right: 15px;
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+      .success-popup {
+        position: fixed;
         top: 50%;
-        transform: translateY(-50%);
-        color: #007bff;
-        cursor: pointer;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 16px;
+        animation: fadeIn 0.5s ease;
+      }
+      .success-popup.fade-out {
+        animation: fadeOut 0.5s ease;
+      }
+      h4 {
+        color: #6a11cb;
+        font-weight: 600;
+        margin-bottom: 20px;
       }
     </style>
   </head>
-  <body class="bg-light">
-    <div class="container">
-      <div class="form-container">
-        <h4 class="text-center mb-4">11th Arts Admission Form</h4>
-        <form id="submit-to-google-sheet">
-		
-		<div class="form-group">
-            <label for="text_dropdown">Academic Year:<span style="color: red;">*</span></label>
+  <body>
+    <div class="form-container">
+      <h4 class="text-center">11th Commerce Admission Form</h4>
+      <form id="submit-to-google-sheet">
+        <div class="form-group">
+          <label for="text_dropdown">Academic Year:<span style="color: red;">*</span></label>
+          <div class="position-relative">
             <select class="form-control" name="Academic_Year" id="text_dropdown" required>
-              <option value="" disabled selected hidden>Select</option>
+              <option value="">Select</option>
               <option value="2025-26">2025-26</option>
+			  <option value="2026-27">2026-27</option>
             </select>
+            <i class="fas fa-calendar-alt input-icon"></i>
           </div>
-          <div class="form-group">
-            <label for="name">Full Name:<span style="color: red;">*</span></label>
+        </div>
+        <div class="form-group">
+          <label for="name">Full Name:<span style="color: red;">*</span></label>
+          <div class="position-relative">
             <input
               class="form-control"
               type="text"
@@ -69,9 +161,12 @@
               placeholder="Name"
               required
             />
+            <i class="fas fa-user input-icon"></i>
           </div>
-          <div class="form-group">
-            <label for="father_name">Father's Name:<span style="color: red;">*</span></label>
+        </div>
+        <div class="form-group">
+          <label for="father_name">Father's Name:<span style="color: red;">*</span></label>
+          <div class="position-relative">
             <input
               class="form-control"
               type="text"
@@ -80,9 +175,12 @@
               placeholder="Father's Name"
               required
             />
+            <i class="fas fa-user input-icon"></i>
           </div>
-		  <div class="form-group">
-            <label for="mother_name"">Mother's Name:<span style="color: red;">*</span></label>
+        </div>
+		<div class="form-group">
+            <label for="mother_name">Mother's Name:<span style="color: red;">*</span></label>
+			<div class="position-relative">
             <input
               class="form-control"
               type="text"
@@ -91,160 +189,168 @@
               placeholder="Mother's Name"
               required
             />
+			<i class="fas fa-user input-icon"></i>
           </div>
-          <div class="form-group">
-            <label for="dob">Date of Birth:<span style="color: red;">*</span></label>
-            <input
-              class="form-control"
-              type="date"
-              name="Date_of_Birth"
-              id="dob"
-              required
-            />
-			<i class="fas fa-calendar-alt calendar-icon"></i>
-          </div>
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input
-              class="form-control"
-              type="email"
-              name="Email"
-              id="email"
-              placeholder="Email"
-            />
-          </div>
-          <div class="form-group">
-            <label for="contact_number">Mobile Number (Personal ):</label>
-            <input
-              class="form-control"
-              type="tel"
-              name="Personal_Contact_No"
-              id="contact_number"
-              placeholder="Contact Number"
-			  pattern="^\d{10}$"
-              title="Please enter a valid 10-digit phone number"
-            />
-          </div>
-		  <div class="form-group">
-            <label for="contact_number">Mobile Number (Parent):<span style="color: red;">*</span></label>
-            <input
-              class="form-control"
-              type="tel"
-              name="Parent_Contact_No"
-              id="contact_number"
-              placeholder="Contact Number"
-			  pattern="^\d{10}$"
-              title="Please enter a valid 10-digit phone number"
-              required
-            />
-          </div>
+		  </div>
+             <div class="form-group">
+              <label for="dob">Date of Birth: <span style="color: red;">*</span></label>
+			  <div class="position-relative">
+              <input
+                class="form-control"
+                type="date"
+                name="Date_of_Birth"
+                id="dob"
+                required
+              />
+			  <i class="fas fa-calendar-alt input-icon"></i>
+              <small class="text-danger" id="dobError" style="display: none;">
+               You must be at least 15 years old.
+              </small>
+               </div></div>
+                     <div class="form-group">
+              <label for="email">Email:</label>
+			  <div class="position-relative">
+              <input
+                class="form-control"
+                type="email"
+                name="Email"
+                id="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                title="Please enter a valid email address (e.g., example@mail.com)"
+              />
+			  <i class="fas fa-envelope input-icon"></i>
+              <small class="text-danger" id="emailError" style="display: none;">Invalid email format</small>
+            </div></div>
+                      <div class="form-group">
+              <label for="contact_number">Mobile Number (Personal):</label>
+              <div class="position-relative">
+			  <input
+                class="form-control"
+                type="tel"
+                name="Personal_Contact_No"
+                id="contact_number"
+                placeholder="Enter your mobile number"
+                pattern="[6789][0-9]{9}"
+               title="Mobile number must be 10 digits and start with 6, 7, 8, or 9"
+              />
+			  <i class="fas fa-phone input-icon"></i>
+              <small class="text-danger" id="mobileError" style="display: none;">
+                Mobile number must be 10 digits and start with 6, 7, 8, or 9
+              </small>
+            </div></div>
+	        <div class="form-group">
+              <label for="contact_number">Mobile Number (Parent): <span style="color: red;">*</span></label>
+              <div class="position-relative">
+			  <input
+                class="form-control"
+                type="tel"
+                name="Parent_Contact_No"
+                id="contact_number"
+                placeholder="Enter your mobile number"
+                required
+                pattern="[6789][0-9]{9}"
+                title="Mobile number must be 10 digits and start with 6, 7, 8, or 9"
+              />
+			  <i class="fas fa-phone input-icon"></i>
+              <small class="text-danger" id="mobileError" style="display: none;">
+               Mobile number must be 10 digits and start with 6, 7, 8, or 9
+              </small>
+            </div></div>
           <div class="form-group">
             <label for="gender" class="hattrick">Gender:<span style="color: red;">*</span></label>
+			<div class="position-relative">
             <select class="form-control" name="Gender" id="gender" required>
-              <option value="" disabled selected hidden>Select...</option>
+              <option value="">Select...</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-          </div>
+			<i class="fas fa-venus-mars input-icon"></i>
+          </div></div>
 		  <div class="form-group">
-            <label for="email">Last School / College Name:<span style="color: red;">*</span></label>
+            <label for="lastschool">Last School / College Name:</label>
+			<div class="position-relative">
             <input
               class="form-control"
               type="text"
               name="Last_School_College_Name"
               id="School"
               placeholder="Last School / College Name"
-			  required
             />
-			</div>
+			<i class="fas fa-school input-icon"></i>
+			</div></div>
 			<div class="form-group">
-            <label for="email">Marks (%) in Last Exam:<span style="color: red;">*</span></label>
+            <label for="email">Marks (%) in Last Exam:</label>
+			<div class="position-relative">
             <input
               class="form-control"
               type="text"
               name="Marks_(%)_in_Last_Exam"
               id="School"
               placeholder="Marks (%) in Last Exam"
-			  required
             />
-              </div>
-          <div class="form-group">
-            <label for="message">Address:<span style="color: red;">*</span></label>
-            <textarea
+			<i class="fas fa-percentage input-icon"></i>
+              </div></div>
+        <div class="form-group">
+          <label for="message">Address:<span style="color: red;">*</span></label>
+		  <div class="position-relative">
+          <textarea
+            class="form-control"
+            name="Address"
+            id="address"
+            placeholder="Type Address"
+            required
+          ></textarea>
+		  <i class="fas fa-map-marker-alt input-icon"></i>
+        </div></div>
+		<div class="form-group">
+            <label for="note">Note:</label>
+			<div class="position-relative">
+            <input
               class="form-control"
-              name="Address"
-              id="address"
-              placeholder="Type Address"
-              required
-            ></textarea>
-          </div>
-          <div class="form-group form-check mt-2">
-            <input class="form-check-input" type="checkbox" id="age" />
-            <label class="form-check-label" for="age">
-              Please check out if you fill correctly
-            </label>
-          </div>
-          <div class="form-group form-check">
-            <input class="form-check-input" type="checkbox" id="ex" required />
-            <label class="form-check-label" for="ex">
-              By checking this box I certify that I agree with the data terms
-              and policies.
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">
-            Submit
-          </button>
-        </form>
-        <div class="progress-circle">
-          <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
+              type="text"
+              name="Note"
+              id="School"
+              placeholder="Any Notes"
+            />
+			<i class="fas fa-sticky-note input-icon"></i>
+              </div></div>
+        <button type="submit" class="btn btn-primary btn-block">
+          Submit
+        </button>
+      </form>
+      <div class="progress-circle">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
         </div>
       </div>
     </div>
-	
-	<script>
-  const scriptURL =
-    "https://script.google.com/macros/s/AKfycbwsoGs-eweF6Ix8hf9_vQgqvPBCHACa8x4om7E_BO_Fjgu7elJbFzUkdmYxUn-gxisI/exec";
+
+   <script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbx6vt4DIII_wg0u4Pr9aSehrpIjkgvfbW1rKXUwhDuyls3u3CWC0xGZKORYo33diCTw/exec";
+  const sheetName = "Adm_11Arts"; // Change this to any sheet name
   const form = document.forms["submit-to-google-sheet"];
   const progressCircle = document.querySelector(".progress-circle");
+  const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     progressCircle.style.display = "block";
+    submitButton.disabled = true; // Disable the submit button
 
+    // Create FormData object and append sheetName
     var formData = new FormData(form);
-    var ex = document.getElementById("ex").checked;
-    var age = document.getElementById("age").checked;
-
-    if (age) {
-      formData.append("age", "Yes");
-    } else {
-      formData.append("age", "No");
-    }
-    if (ex) {
-      formData.append("ex", "Yes");
-    } else {
-      formData.append("ex", "No");
-    }
+    formData.append("sheetName", sheetName); // Add sheetName to the request
 
     fetch(scriptURL, { method: "POST", body: formData })
       .then((response) => {
         progressCircle.style.display = "none";
+        submitButton.disabled = false; // Re-enable the submit button
         
         // Show success popup
         const successPopup = document.createElement("div");
-        successPopup.style.position = "fixed";
-        successPopup.style.top = "50%";
-        successPopup.style.left = "50%";
-        successPopup.style.transform = "translate(-50%, -50%)";
-        successPopup.style.backgroundColor = "green";
-        successPopup.style.color = "white";
-        successPopup.style.padding = "20px";
-        successPopup.style.borderRadius = "8px";
-        successPopup.style.textAlign = "center";
-        successPopup.style.fontSize = "16px";
-        successPopup.style.animation = "fadeIn 1s ease";
+        successPopup.classList.add("success-popup");
         successPopup.innerHTML = "Submitted Successfully!";
         
         // Add the popup to the body
@@ -252,10 +358,10 @@
 
         // Close popup after 3 seconds
         setTimeout(() => {
-          successPopup.style.animation = "fadeOut 1s ease";
+          successPopup.classList.add("fade-out");
           setTimeout(() => {
             successPopup.remove();
-          }, 1000);
+          }, 500);
         }, 3000);
 
         // Reset the form after submission
@@ -263,20 +369,82 @@
       })
       .catch((error) => {
         progressCircle.style.display = "none";
-        swal("Error", "Something went wrong. Please try again!", "error");
+        submitButton.disabled = false; // Re-enable the submit button in case of error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong. Please try again!',
+        });
       });
   });
+  
+  document.getElementById("email").addEventListener("input", function () {
+    const emailInput = this;
+    const emailError = document.getElementById("emailError");
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  document.getElementById("file_upload").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file && file.size > 10 * 1024 * 1024) {
-      Swal.fire("Error", "File size exceeds 10MB limit.", "error");
-      e.target.value = ""; // Reset the file input
+    if (emailPattern.test(emailInput.value)) {
+      emailError.style.display = "none"; // Hide error if valid
+    } else {
+      emailError.style.display = "block"; // Show error if invalid
     }
   });
-		 
-    window.onload = init;
+  
+   document.getElementById("contact_number").addEventListener("input", function () {
+    const mobileInput = this;
+    const mobileError = document.getElementById("mobileError");
+    const mobilePattern = /^[6789]\d{9}$/;
+
+    if (mobilePattern.test(mobileInput.value)) {
+      mobileError.style.display = "none"; // Hide error if valid
+    } else {
+      mobileError.style.display = "block"; // Show error if invalid
+    }
+  });
+  
+   document.addEventListener("DOMContentLoaded", function () {
+    const dobInput = document.getElementById("dob");
+    const dobError = document.getElementById("dobError");
+
+    // Set max date (user must be at least 15 years old)
+    const today = new Date();
+    const minAge = 15;
+    const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    dobInput.setAttribute("max", maxDate.toISOString().split("T")[0]); // Restrict future dates
+
+    dobInput.addEventListener("change", function () {
+      if (!this.value) return; // Ensure a date is selected
+
+      const selectedDate = new Date(this.value);
+      const ageDiff = today.getFullYear() - selectedDate.getFullYear();
+      const isOldEnough =
+        ageDiff > minAge ||
+        (ageDiff === minAge &&
+          (today.getMonth() > selectedDate.getMonth() ||
+            (today.getMonth() === selectedDate.getMonth() &&
+              today.getDate() >= selectedDate.getDate())));
+
+      if (!isOldEnough) {
+        dobError.style.display = "block"; // Show error if age < 15
+        this.value = ""; // Clear the invalid date
+      } else {
+        dobError.style.display = "none"; // Hide error if valid
+
+        // Format date as DD-MM-YY and set back into input field
+        const day = selectedDate.getDate().toString().padStart(2, "0");
+        const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+        const year = selectedDate.getFullYear()
+
+        // Convert the input field to text format to show formatted date
+        this.type = "text";
+        this.value = `${year}-${month}-${day}`;
+      }
+    });
+
+    dobInput.addEventListener("focus", function () {
+      this.type = "date"; // Show date picker when clicking the input field
+    });
+  });
 </script>
-</style>
   </body>
 </html>
