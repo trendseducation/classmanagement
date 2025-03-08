@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Payment</title>
-	<script src="auth.js"> </script>
+    <title>Teacher Payment Details</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
+	<script src="auth.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -284,6 +285,136 @@
             font-size: 14px;
         }
         }
+		
+    /* Loading Overlay */
+#loading {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1002; /* Ensure loading spinner is above the popup */
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+}
+
+#spinner {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingPercentage {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* Disabled Buttons */
+#popupDelete:disabled, #popupClose:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Popup Container */
+#popupContainer {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+#popupContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px; /* Increased size */
+  width: 90%; /* Responsive width */
+}
+
+#popupAnimation {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+#popupMessage {
+  margin: 15px 0;
+  font-size: 16px;
+}
+
+#popupButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Space between buttons */
+}
+
+/* Popup Buttons */
+#popupDelete, #popupClose {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-block; /* Ensure buttons are inline */
+}
+
+#popupDelete {
+  background: #ff4d4d; /* Red for delete button */
+  color: white;
+}
+
+#popupDelete:hover {
+  background: #cc0000;
+}
+
+#popupClose {
+  background: #007bff; /* Blue for close button */
+  color: white;
+}
+
+#popupClose:hover {
+  background: #0056b3;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  #popupContent {
+    padding: 15px;
+    max-width: 90%; /* Full width on small screens */
+  }
+
+  #popupMessage {
+    font-size: 14px;
+  }
+
+  #popupDelete, #popupClose {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
     </style>
 </head>
 <body>
@@ -294,11 +425,13 @@
         <div class="tab" data-tab="editView">Edit Details</div>
     </div>
 
-        <div class="loading" id="loading" style="display: none;">
-        <div class="spinner">
-        <div class="percentage" id="loadingPercentage">0%</div>
-            </div>
-              </div>
+        <!-- Loading Overlay -->
+<div id="loading">
+  <div class="loading-content">
+    <div id="spinner"></div>
+    <div id="loadingPercentage">0%</div>
+  </div>
+</div>
 			  
     <div style= "display: flex; justify-content: center; align-items: center;">
     <input
@@ -428,48 +561,143 @@
             <button type="submit" class="submit-btn">Update</button>
         </form>
     </div></div></div>
+	
+	<!-- Popup Container -->
+<div id="popupContainer">
+  <div id="popupContent">
+    <div id="popupAnimation"></div>
+    <div id="popupMessage"></div>
+    <div id="popupButtons">
+      <button id="popupDelete">Delete</button>
+      <button id="popupClose">Close</button>
+    </div>
+  </div>
+</div>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwumXq8sEncbIXYEMNkaXtK10_a-hfTw7-Vw4hU5Ew5slwktnvrlsiu-fNSGv6AIp6G/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzrMZ6PHbG5XMiC4o05by9bzT4p1u_cQkE88zMTT38Q4S3lh9rDQ8cicflIsNfIuaeObQ/exec";
+        const sheetName = "Teacher_Payment"; // Change this to any sheet name
 
-        // Tab switching logic
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-            });
-        });
+// Lottie Animations
+const successAnimation = "https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json"; // Replace with your Lottie URL
+const errorAnimation = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"; // Replace with your Lottie URL
+const confirmAnimation = "https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json"; // Replace with your Lottie URL
 
-        const loadingOverlay = document.getElementById("loading");
-        let selectedRowData = null;
+// Tab switching logic
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
 
-        async function fetchData() {
-            showLoading();
-            try {
-                const response = await fetch(`${scriptURL}?action=fetchData`);
-                const result = await response.json();
-                if (result.success) {
-                    renderTable(result.data);
-                } else {
-                    alert(result.message);
-                }
-            } catch (error) {
-                alert("Error fetching data: " + error.message);
-            }
-            hideLoading();
-        }
+const loadingOverlay = document.getElementById("loading");
+let selectedRowData = null;
 
-        function renderTable(data) {
-    const tableBody = document.querySelector("#dataTable tbody");
-    tableBody.innerHTML = ""; // Clear the table body before rendering new rows
+// Show loading overlay
+function showLoading() {
+  const loadingOverlay = document.getElementById("loading");
+  loadingOverlay.style.display = "flex";
+  updateLoadingPercentage(0);
+  simulateLoading();
+}
 
-    data.slice(1).forEach((rowData, rowIndex) => {
-        const tableRow = document.createElement("tr");
-        tableRow.dataset.rowIndex = rowIndex + 2;
+// Hide loading overlay
+function hideLoading() {
+  const loadingOverlay = document.getElementById("loading");
+  loadingOverlay.style.display = "none";
+}
 
-        // Extract and format the date
+// Update loading percentage
+function updateLoadingPercentage(percentage) {
+  const percentageElement = document.getElementById("loadingPercentage");
+  percentageElement.textContent = `${percentage}%`;
+}
+
+// Simulate loading progress
+function simulateLoading() {
+  let percentage = 0;
+  const interval = setInterval(() => {
+    percentage += 10;
+    updateLoadingPercentage(percentage);
+    if (percentage >= 100) {
+      clearInterval(interval);
+    }
+  }, 200);
+}
+
+let currentAnimation = null; // Track the current Lottie animation
+
+// Show popup with Lottie animation and dynamic buttons
+function showPopup(animationUrl, message, showDeleteButton = false) {
+  const popupContainer = document.getElementById("popupContainer");
+  const popupAnimation = document.getElementById("popupAnimation");
+  const popupMessage = document.getElementById("popupMessage");
+  const popupDelete = document.getElementById("popupDelete");
+  const popupClose = document.getElementById("popupClose");
+
+  // Clear previous animation
+  if (currentAnimation) {
+    currentAnimation.destroy();
+  }
+
+  // Load new animation
+  currentAnimation = lottie.loadAnimation({
+    container: popupAnimation,
+    renderer: "svg",
+    loop: false,
+    autoplay: true,
+    path: animationUrl,
+  });
+
+  // Set message
+  popupMessage.textContent = message;
+
+  // Show/hide buttons based on context
+  if (showDeleteButton) {
+    popupDelete.style.display = "inline-block"; // Show Delete button
+  } else {
+    popupDelete.style.display = "none"; // Hide Delete button
+  }
+  popupClose.style.display = "inline-block"; // Always show Close button
+
+  // Display popup
+  popupContainer.style.display = "flex";
+}
+
+// Close popup
+document.getElementById("popupClose").addEventListener("click", () => {
+  document.getElementById("popupContainer").style.display = "none";
+});
+
+// Fetch data from Google Sheet
+async function fetchData() {
+  showLoading();
+  try {
+    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
+    const result = await response.json();
+    if (result.success) {
+      renderTable(result.data);
+    } else {
+      showPopup(errorAnimation, result.message);
+    }
+  } catch (error) {
+    showPopup(errorAnimation, "Error fetching data: " + error.message);
+  }
+  hideLoading();
+}
+
+// Render table data
+function renderTable(data) {
+  const tableBody = document.querySelector("#dataTable tbody");
+  tableBody.innerHTML = "";
+  data.slice(1).forEach((rowData, rowIndex) => {
+    const tableRow = document.createElement("tr");
+    tableRow.dataset.rowIndex = rowIndex + 2;
+	
+	// Extract and format the date
         let formattedDate = '';
         const rawDate = rowData[1];
         const dateObject = new Date(rawDate);
@@ -483,34 +711,35 @@
             console.error("Invalid date:", rawDate);
             formattedDate = "Invalid Date"; // Fallback text for invalid dates
         }
-
-        // Set row innerHTML
-        tableRow.innerHTML = `
-            <td>${rowIndex + 1}</td>
-			<td>${rowData[2] || ''}</td>
-            <td>${formattedDate}</td>
-            <td>
-                <button onclick="viewDetails(${rowIndex + 2})">View Details</button>
-            </td>
-        `;
-        tableBody.appendChild(tableRow);
-    });
+		
+    tableRow.innerHTML = `
+      <td>${rowIndex + 1}</td>
+      <td>${rowData[2]}</td>
+      <td>${formattedDate}</td>
+      <td>
+        <button onclick="viewDetails(${rowIndex + 2})">Get Details</button>
+      </td>
+    `;
+    tableBody.appendChild(tableRow);
+  });
 }
 
-        function viewDetails(rowIndex) {
-            showTab('detailsView');
-            selectedRowData = rowIndex;
-            loadDetails(selectedRowData);
-        }
+// View details of a row
+function viewDetails(rowIndex) {
+  showTab('detailsView');
+  selectedRowData = rowIndex;
+  loadDetails(selectedRowData);
+}
 
-        async function loadDetails(rowIndex) {
-            showLoading();
-            try {
-                const response = await fetch(`${scriptURL}?action=fetchData`);
-                const result = await response.json();
-                const rowData = result.data[rowIndex - 1];
-                document.getElementById("detailsId").textContent = rowIndex - 1;
-				document.getElementById("detailsAcademic").textContent = rowData[0];
+// Load details of a row
+async function loadDetails(rowIndex) {
+  showLoading();
+  try {
+    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
+    const result = await response.json();
+    const rowData = result.data[rowIndex - 1];
+    document.getElementById("detailsId").textContent = rowIndex - 1;
+    document.getElementById("detailsAcademic").textContent = rowData[0];
                 
 				(() => {
     const rawDates_DOP = rowData[1]; // Extract raw date from rowData[1]
@@ -551,49 +780,67 @@
 				document.getElementById("detailsTotalBal").textContent = rowData[8];
 				document.getElementById("detailsTotalpayment").textContent = rowData[9];
 				document.getElementById("detailsNote").textContent = rowData[10];
-            } catch (error) {
-                alert("Error loading details: " + error.message);
-            }
-            hideLoading();
-        }
+  } catch (error) {
+    showPopup(errorAnimation, "Error loading details: " + error.message, false); // Show only Close button
+  }
+  hideLoading();
+}
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(tabContent => tabContent.classList.remove('active'));
-            document.querySelector(`.tab[data-tab=${tabId}]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
+// Show a specific tab
+function showTab(tabId) {
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(tabContent => tabContent.classList.remove('active'));
+  document.querySelector(`.tab[data-tab=${tabId}]`).classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
 
-        // Edit and Delete logic for Page 2
-        document.getElementById("editButton").addEventListener('click', () => {
-            showTab('editView');
-            loadEditForm(selectedRowData);
-        });
+// Edit button logic
+document.getElementById("editButton").addEventListener('click', () => {
+  showTab('editView');
+  loadEditForm(selectedRowData);
+});
 
-        document.getElementById("deleteButton").addEventListener('click', async () => {
-            const confirmDelete = confirm("Are you sure you want to delete this data?");
-            if (confirmDelete) {
-                showLoading();
-                try {
-                    const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}`);
-                    const result = await response.json();
-                    alert(result.message);
-                    fetchData();
-                    showTab('tableView');
-                } catch (error) {
-                    alert("Error deleting row: " + error.message);
-                }
-                hideLoading();
-            }
-        });
+// Delete button logic
+document.getElementById("deleteButton").addEventListener('click', async () => {
+  showPopup(confirmAnimation, "Are you sure you want to delete this data?", true); // Show Delete and Close buttons
 
-        function loadEditForm(rowIndex) {
-            showLoading();
-            fetch(`${scriptURL}?action=fetchData`)
-                .then(response => response.json())
-                .then(result => {
-                    const rowData = result.data[rowIndex - 1];
-                    const rawDate = rowData[1];
+  // Handle delete button click
+  document.getElementById("popupDelete").addEventListener("click", async () => {
+    const popupDelete = document.getElementById("popupDelete");
+    const popupClose = document.getElementById("popupClose");
+
+    // Disable delete and close buttons
+    popupDelete.disabled = true;
+    popupClose.disabled = true;
+
+    // Show loading spinner above the popup
+    showLoading();
+
+    try {
+      const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}&sheetName=${sheetName}`);
+      const result = await response.json();
+      showPopup(successAnimation, result.message, false); // Show only Close button
+      fetchData();
+      showTab('tableView');
+    } catch (error) {
+      showPopup(errorAnimation, "Error deleting row: " + error.message, false); // Show only Close button
+    } finally {
+      hideLoading();
+      document.getElementById("popupContainer").style.display = "none"; // Close popup after delete
+      popupDelete.disabled = false; // Re-enable delete button
+      popupClose.disabled = false; // Re-enable close button
+    }
+  });
+});
+
+// Load edit form with data
+function loadEditForm(rowIndex) {
+  showLoading();
+  fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`)
+    .then(response => response.json())
+    .then(result => {
+      const rowData = result.data[rowIndex - 1];
+      const rawDate = rowData[1];
 				    const dateObject = new Date(rawDate);
 					dateObject.setDate(dateObject.getDate() + 1);
 				    const formattedDate = dateObject.toISOString().split("T")[0];
@@ -607,15 +854,16 @@
 					document.getElementById("balanceAmount").value = rowData[8] || '';
 					document.getElementById("totalPayment").value = rowData[9] || '';
 					document.getElementById("editNote").value = rowData[10] || '';
-                })
-                .catch(error => alert("Error loading edit form: " + error.message))
-                .finally(() => hideLoading());
-        }
+    })
+    .catch(error => showPopup(errorAnimation, "Error loading edit form: " + error.message))
+    .finally(() => hideLoading());
+}
 
-        document.getElementById("editForm").addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const updatedData = {
-			    dop: document.getElementById("editDOP").value,
+// Update button logic
+document.getElementById("editForm").addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const updatedData = {
+    dop: document.getElementById("editDOP").value,
                 name: document.getElementById("editName").value,
                 stream: document.getElementById("editStream").value,
                 tlecture: document.getElementById("editTlecture").value,
@@ -625,9 +873,9 @@
 				balanceamount: document.getElementById("balanceAmount").value,
 				totalpayment: document.getElementById("totalPayment").value,
 				note: document.getElementById("editNote").value
-            };
-            const updates = [
-			    { row: selectedRowData, col: 2, value: updatedData.dop },
+  };
+  const updates = [
+                { row: selectedRowData, col: 2, value: updatedData.dop },
                 { row: selectedRowData, col: 3, value: updatedData.name },
                 { row: selectedRowData, col: 4, value: updatedData.stream },
                 { row: selectedRowData, col: 5, value: updatedData.tlecture },
@@ -637,111 +885,59 @@
 				{ row: selectedRowData, col: 9, value: updatedData.balanceamount },
 				{ row: selectedRowData, col: 10, value: updatedData.totalpayment },
 				{ row: selectedRowData, col: 11, value: updatedData.note }
-            ];
-            try {
-                showLoading();
-                const updatesParam = encodeURIComponent(JSON.stringify(updates));
-                const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}`);
-                const result = await response.json();
-                alert(result.message);
-                showTab('tableView');
-                fetchData();
-            } catch (error) {
-                alert("Error updating row: " + error.message);
-            }
-            hideLoading();
-        });
-
-        let currentPercentage = 0;
-const percentageElement = document.getElementById("loadingPercentage");
-
-function showLoading() {
-    loadingOverlay.style.display = "flex";
-    updateLoadingPercentage(0); // Reset to 0% when loading starts
-}
-
-function hideLoading() {
-    loadingOverlay.style.display = "none";
-}
-
-function updateLoadingPercentage(percentage) {
-    currentPercentage = percentage;
-    percentageElement.textContent = `${currentPercentage}%`;
-}
-
-// Example usage: Increment the percentage during loading
-function simulateLoading() {
-    let percentage = 0;
-    const interval = setInterval(() => {
-        percentage += 10; // Increment by 10%
-		
-        if (percentage > 100) {
-            clearInterval(interval);
-            hideLoading();
-        } else {
-            updateLoadingPercentage(percentage);
-        }
-    }, 200); // Increment every 200ms
-}
-
-// Call simulateLoading() for demo purposes
-window.onload = () => {
+  ];
+  try {
     showLoading();
-    simulateLoading();
+    const updatesParam = encodeURIComponent(JSON.stringify(updates));
+    const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}&sheetName=${sheetName}`);
+    const result = await response.json();
+    showPopup(successAnimation, result.message);
+    showTab('tableView');
+    fetchData();
+  } catch (error) {
+    showPopup(errorAnimation, "Error updating row: " + error.message);
+  }
+  hideLoading();
+});
+
+// Search table data
+function searchTable() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const table = document.getElementById("dataTable");
+  const rows = table.getElementsByTagName("tr");
+  let hasResults = false;
+
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName("td");
+    let match = false;
+
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j].textContent.toLowerCase().includes(input)) {
+        match = true;
+        break;
+      }
+    }
+
+    if (match) {
+      rows[i].style.display = ""; // Show row
+      hasResults = true;
+    } else {
+      rows[i].style.display = "none"; // Hide row
+    }
+  }
+
+  // Show or hide "No results" message
+  const noResults = document.getElementById("noResults");
+  noResults.style.display = hasResults ? "none" : "block";
+}
+
+// Initial data load on page load
+window.onload = () => {
+  showLoading();
+  fetchData();
 };
 
-// Function to search data in the table
-        function searchTable() {
-            const input = document.getElementById("searchInput").value.toLowerCase();
-            const table = document.getElementById("dataTable");
-            const rows = table.getElementsByTagName("tr");
-            let hasResults = false;
-
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName("td");
-                let match = false;
-
-                for (let j = 0; j < cells.length; j++) {
-                    if (cells[j].textContent.toLowerCase().includes(input)) {
-                        match = true;
-                        break;
-                    }
-                }
-
-                if (match) {
-                    rows[i].style.display = ""; // Show row
-                    hasResults = true;
-                } else {
-                    rows[i].style.display = "none"; // Hide row
-                }
-            }
-
-            // Show or hide "No results" message
-            const noResults = document.getElementById("noResults");
-            noResults.style.display = hasResults ? "none" : "block";
-        }
-		
-		// Total Lecture number Function
-		 document.getElementById("editTlecture").addEventListener("input", function (e) {
-        const value = e.target.value;
-        if (value < 1) {
-            e.target.value = '';
-        }
-    });
-		document.getElementById("editTPaidLec").addEventListener("input", function (e) {
-        const value = e.target.value;
-        if (value < 1) {
-            e.target.value = '';
-        }
-    });
-	document.getElementById("editPerLecAmt").addEventListener("input", function (e) {
-        const value = e.target.value;
-        if (value < 1) {
-            e.target.value = '';
-        }
-    });
-	
-	// Amount automatic Calculation Function
+// Amount automatic Calculation Function
 	
 	             function calculateValues() {
             const editTlecture = parseFloat(document.getElementById('editTlecture').value) || 0;
@@ -756,10 +952,6 @@ window.onload = () => {
             document.getElementById('totalPaid').value = totalPaid.toFixed(2);
             document.getElementById('balanceAmount').value = balanceAmount.toFixed(2);
         }
-	      
-	
-        // Initial data load on page load
-        window.onload = fetchData;
     </script>
 </body>
 </html>
