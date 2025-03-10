@@ -166,7 +166,23 @@
   <!-- SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyE1wr3bGzQVI4B5DZDmRzVOSFeUWdVYPdSQeqisxPZKGqPljq2yV8SMGozWKQGPGxVDw/exec"; // Replace with your deployed Apps Script URL
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxC0iAOSHhbFuKqHl5WgXmYwtyMnhyU0L8MWUP3gIZOZkr_vfPuZjtqIKUgMkzT-fuf/exec"; // Replace with your deployed Apps Script URL
+
+    // Function to set the spreadsheet details
+    function setSpreadsheetDetails(spreadsheetId, sheetName) {
+      fetch(scriptUrl + "?action=setSpreadsheetDetails&spreadsheetId=" + encodeURIComponent(spreadsheetId) + "&sheetName=" + encodeURIComponent(sheetName))
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            console.error("Error setting spreadsheet details:", data.error);
+          } else {
+            console.log("Spreadsheet details set successfully");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    }
 
     // Utility functions using SweetAlert2 for popup messages and spinner control
     function showSpinner() {
@@ -265,52 +281,86 @@
     });
     
     // Submit attendance data.
-    // This function collects the checkbox data (rollNo and status),
-    // sends it to the server, shows a success popup, and redirects to index.html.
-    function submitAttendance() {
-      document.getElementById("submitBtn").disabled = true;
-      showSpinner();
-      const checkboxes = document.querySelectorAll(".attendance-checkbox");
-      const attendanceData = [];
-      
-      checkboxes.forEach(checkbox => {
-        attendanceData.push({
-          rollNo: checkbox.dataset.roll,
-          status: checkbox.checked ? "Present" : "Absent"
-        });
+function submitAttendance() {
+  // Disable the submit button to prevent multiple clicks
+  document.getElementById("submitBtn").disabled = true;
+
+  // Show SweetAlert2 loading spinner
+  Swal.fire({
+    title: 'Submitting Attendance...',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  // Collect attendance data
+  const checkboxes = document.querySelectorAll(".attendance-checkbox");
+  const attendanceData = [];
+  
+  checkboxes.forEach(checkbox => {
+    attendanceData.push({
+      rollNo: checkbox.dataset.roll,
+      status: checkbox.checked ? "Present" : "Absent"
+    });
+  });
+
+  // Send attendance data to the server
+  fetch(scriptUrl + "?action=submitAttendance", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `attendance=${encodeURIComponent(JSON.stringify(attendanceData))}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Close the loading spinner
+    Swal.close();
+
+    if (data.error) {
+      // Show error message if submission fails
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data.error,
+        confirmButtonColor: '#5563DE'
       });
-      
-      fetch(scriptUrl + "?action=submitAttendance", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `attendance=${encodeURIComponent(JSON.stringify(attendanceData))}`
-      })
-      .then(response => response.text())
-      .then(data => {
-        hideSpinner();
-        Swal.fire({
-          icon: 'success',
-          title: 'Attendance submitted successfully!',
-          showConfirmButton: false,
-          timer: 2000
-        }).then(() => {
-          window.location.href = "attrendence_dashboard.html";
-        });
-      })
-      .catch(error => {
-        hideSpinner();
-        Swal.fire({
-          icon: 'error',
-          title: 'Error submitting attendance.',
-          text: error,
-          confirmButtonColor: '#5563DE'
-        });
-        document.getElementById("submitBtn").disabled = false;
+    } else {
+      // Show success message and redirect
+      Swal.fire({
+        icon: 'success',
+        title: 'Attendance submitted successfully!',
+        showConfirmButton: false,
+        timer: 2000
+      }).then(() => {
+        window.location.href = "attrendence_dashboard.html";
       });
     }
+  })
+  .catch(error => {
+    // Close the loading spinner
+    Swal.close();
+
+    // Show error message if there's a network or server error
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Failed to submit attendance. Please try again.',
+      confirmButtonColor: '#5563DE'
+    });
+  })
+  .finally(() => {
+    // Re-enable the submit button
+    document.getElementById("submitBtn").disabled = false;
+  });
+}
     
     // Initial setup on page load.
     window.onload = function() {
+      // Set Spreadsheet ID and Sheet Name
+      const spreadsheetId = "1lBmzk3Ra42H8WmmygL8rLVJnac39F9y3PRfyqfvdsGs"; // Replace with your Spreadsheet ID
+      const sheetName = "June_25"; // Replace with your Sheet Name
+      setSpreadsheetDetails(spreadsheetId, sheetName);
+
       setHeaderDate();
       loadStudents();
     }
