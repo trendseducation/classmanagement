@@ -172,8 +172,24 @@
   </div>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzTPZl94O_Xli3SzLCnqVPT8YZlhRiJPJXLv9U_zwmvTesn9Bd_MX67pbqMPNBnTBzuYA/exec";
-    
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxC0iAOSHhbFuKqHl5WgXmYwtyMnhyU0L8MWUP3gIZOZkr_vfPuZjtqIKUgMkzT-fuf/exec";
+
+    // Function to set the spreadsheet details
+    function setSpreadsheetDetails(spreadsheetId, sheetName) {
+      fetch(scriptUrl + "?action=setSpreadsheetDetails&spreadsheetId=" + encodeURIComponent(spreadsheetId) + "&sheetName=" + encodeURIComponent(sheetName))
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            console.error("Error setting spreadsheet details:", data.error);
+          } else {
+            console.log("Spreadsheet details set successfully");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    }
+
     function getFormattedDate() {
       const date = new Date();
       const options = { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' };
@@ -201,6 +217,11 @@
 
     async function loadAttendance() {
       try {
+        // Set Spreadsheet ID and Sheet Name -------------------------------------------------------------------------------------------
+        const spreadsheetId = "1lQzkr2u1s7cHpxMwZOW-ZJLaLPvoP24a5InFap9UidI"; // Replace with your Spreadsheet ID
+        const sheetName = "June_25"; // Replace with your Sheet Name
+        setSpreadsheetDetails(spreadsheetId, sheetName);
+
         let response = await fetch(scriptUrl + "?action=checkTodayDate");
         let data = await response.json();
         
@@ -279,9 +300,9 @@
       document.getElementById("popupMessage").style.display = "none";
     }
 	
-	function gotodashboard() {
-	window.location.href = "attrendence_dashboard.html";
-	}
+    function gotodashboard() {
+      window.location.href = "attrendence_dashboard.html";
+    }
     
     window.onload = loadAttendance;
   </script>
