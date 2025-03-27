@@ -6,7 +6,6 @@
     <title>Student Test Chapter Records</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<script src="auth.js"></script>
     <style>
     :root {
     --primary-color: #4361ee;
@@ -907,15 +906,14 @@ tr:hover {
     const attendance = item[spreadsheetConfig.columns.attendance - 1];
     const studentName = item[spreadsheetConfig.columns.studentName - 1];
     const testChapter = item[spreadsheetConfig.columns.chapterName - 1];
-    const stream = item[17] || ''; // Get the stream info (11th Com, 12th Sci, etc.)
+    const stream = item[17] || '';
     
     modalTitle.textContent = `${studentName}'s ${attendance === 'Present' ? 'Test Results' : 'Absence Details'}`;
     
     if (attendance === 'Present') {
-        // Format percentage correctly (convert decimal to percentage)
         let percentage = item[spreadsheetConfig.columns.percentage - 1];
         if (percentage && !isNaN(percentage)) {
-            if (percentage <= 1) { // If it's a decimal (0.3998)
+            if (percentage <= 1) {
                 percentage = (percentage * 100).toFixed(2);
             }
             percentage += '%';
@@ -923,12 +921,34 @@ tr:hover {
             percentage = 'N/A';
         }
         
-        // Determine result class
         const result = item[spreadsheetConfig.columns.result - 1];
         const resultClass = result && result.toString().toLowerCase().includes('pass') ? 'pass' : 'fail';
-        
-        // Check if this is a Science stream
         const isScienceStream = stream.includes('Sci');
+        
+        // Function to create subject row if value exists
+        const createSubjectRow = (subjectName, value) => {
+            if (value && value.toString().trim() !== '') {
+                return `
+                    <tr>
+                        <td>${subjectName}</td>
+                        <td class="marks-cell">${value}</td>
+                    </tr>
+                `;
+            }
+            return '';
+        };
+        
+        // Get all subject values
+        const english = item[spreadsheetConfig.columns.english - 1];
+        const hindi = item[spreadsheetConfig.columns.hindi - 1];
+        const marathi = item[spreadsheetConfig.columns.marathi - 1];
+        const maths = item[spreadsheetConfig.columns.maths - 1];
+		const math = item[spreadsheetConfig.columns.math - 1];
+        const bioOrBk = item[spreadsheetConfig.columns.bkAccountancy - 1];
+        const chemOrOc = item[spreadsheetConfig.columns.ocManagement - 1];
+        const physicsOrEco = item[spreadsheetConfig.columns.economy - 1];
+        const geoOrSp = item[spreadsheetConfig.columns.sp - 1];
+		const geo = item[spreadsheetConfig.columns.geography - 1];
         
         modalBody.innerHTML = `
             <div class="test-chapter">
@@ -944,63 +964,24 @@ tr:hover {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>English</td>
-                        <td class="marks-cell">${item[spreadsheetConfig.columns.english - 1] || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td>Hindi</td>
-                        <td class="marks-cell">${item[spreadsheetConfig.columns.hindi - 1] || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td>Marathi</td>
-                        <td class="marks-cell">${item[spreadsheetConfig.columns.marathi - 1] || '-'}</td>
-                    </tr>
+                    ${createSubjectRow('English', english)}
+                    ${createSubjectRow('Hindi', hindi)}
+                    ${createSubjectRow('Marathi', marathi)}
                     ${
                         isScienceStream 
                             ? `
-                                <tr>
-                                    <td>Biology</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.bkAccountancy - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Chemistry</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.ocManagement - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Physics</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.economy - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Geography</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.geography - 1] || '-'}</td>
-                                </tr>
-								 <tr>
-                                   <td>Maths</td>
-                                   <td class="marks-cell">${item[spreadsheetConfig.columns.math - 1] || '-'}</td>
-                               </tr>
+                                ${createSubjectRow('Biology', bioOrBk)}
+                                ${createSubjectRow('Chemistry', chemOrOc)}
+                                ${createSubjectRow('Physics', physicsOrEco)}
+                                ${createSubjectRow('Geography', geo)}
+								${createSubjectRow('Maths', math)}
                             `
                             : `
-                                <tr>
-                                    <td>BK & Accountancy</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.bkAccountancy - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>OC & Management</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.ocManagement - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Economy</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.economy - 1] || '-'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Secretarial Practice (SP)</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.sp - 1] || '-'}</td>
-                                </tr>
-								<tr>
-                                    <td>Maths</td>
-                                    <td class="marks-cell">${item[spreadsheetConfig.columns.maths - 1] || '-'}</td>
-                                </tr>
+                                ${createSubjectRow('BK & Accountancy', bioOrBk)}
+                                ${createSubjectRow('OC & Management', chemOrOc)}
+                                ${createSubjectRow('Economy', physicsOrEco)}
+                                ${createSubjectRow('Secretarial Practice (SP)', geoOrSp)}
+								${createSubjectRow('Maths', maths)}
                             `
                     }
                 </tbody>
@@ -1026,7 +1007,6 @@ tr:hover {
             </div>
         `;
     } else {
-        // Show absence reason
         modalBody.innerHTML = `
             <div class="test-chapter">
                 <i class="fas fa-book-open"></i> Test Chapter: ${testChapter || 'N/A'}
