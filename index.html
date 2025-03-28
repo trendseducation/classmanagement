@@ -1,215 +1,655 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Webpage</title>
-  <script src="auth.js" defer> </script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Portal</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: white; /* White background for both desktop and mobile */
+            color: black; /* Text color for better contrast */
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #333; /* Darker text for better contrast */
+            text-align: center;
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: black; /* Black color for close button */
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: none; /* Hidden by default */
+        }
+
+        .sidebar .close-btn:hover {
+            color: #e74c3c; /* Red color on hover */
+        }
+
+        .sidebar .menu-item {
+            padding: 15px 20px;
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: black; /* Black text for better contrast */
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Light border for separation */
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar .menu-item.active {
+            background: #3498db; /* Highlight color for active item */
+            color: white; /* White text for active item */
+            border-radius: 5px;
+        }
+
+        .sidebar .menu-item i {
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 300px; /* Offset for desktop sidebar */
+        }
+
+        .login-container {
+            width: 350px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .input-field {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .login-btn {
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Popup and Spinner Styles */
+        .popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1000;
+        }
+
+        .popup.success {
+            background: #2ecc71;
+        }
+
+        .popup.error {
+            background: #e74c3c;
+        }
+
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid white;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+		
+		/*popup view section*/
+		  .success-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 85%;
+        max-width: 450px;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        z-index: 1000;
+        animation: fadeIn 0.4s ease-out;
+    }
+    
+    .success-icon {
+        font-size: 70px;
+        margin-bottom: 15px;
+        color: #4CAF50;
+        animation: bounce 0.8s;
+    }
+    
+    .success-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .success-message {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+    
+    .passcode-container {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: inline-block;
+    }
+    
+    .passcode-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .passcode {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 28px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        color: #2c3e50;
+        padding: 8px 15px;
+        background: white;
+        border-radius: 8px;
+        display: inline-block;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        animation: reveal 1s forwards;
+        opacity: 0;
+    }
+    
+    .continue-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 50px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+    }
+    
+    .continue-btn:hover {
+        background: #3e8e41;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+    }
+    
+    .continue-btn:active {
+        transform: translateY(0);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -40%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-20px); }
+        60% { transform: translateY(-10px); }
+    }
+    
+    @keyframes reveal {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 600px) {
+        .success-popup {
+            width: 80%;
+            padding: 25px;
+        }
+        
+        .success-icon {
+            font-size: 60px;
+        }
+        
+        .passcode {
+            font-size: 24px;
+        }
     }
 
-    .blur {
-      filter: blur(8px);
-    }
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -300px;
+                display: none; /* Completely hidden when inactive */
+            }
 
-    .container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      padding: 16px;
-    }
+            .sidebar.active {
+                margin-top: 50px;
+                left: 0;
+                display: flex; /* Show sidebar when active */
+            }
 
-    .card {
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      text-align: center;
-      padding: 16px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+            .sidebar .close-btn {
+                display: block; /* Show close button on mobile */
+            }
 
-    .icon {
-      font-size: 48px;
-      color: #555;
-      margin-bottom: 8px;
-    }
+            .main-content {
+                margin-left: 0;
+                padding-top: 80px; /* Offset for header bar */
+            }
 
-    a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
+            /* Header Bar Styles */
+            .header-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                z-index: 1001;
+            }
 
-    .name {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+            .header-bar .sidebar-toggle {
+                position: absolute;
+                left: 20px;
+                background: transparent;
+                border: none;
+                font-size: 24px;
+                color: #3498db; /* Highlight color for menu icon */
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
 
-    .description {
-      font-size: 14px;
-      color: #666;
-    }
+            .header-bar .sidebar-toggle:hover {
+                color: #2980b9; /* Darker color on hover */
+            }
 
-    @media (min-width: 768px) {
-      .container {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .container {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
-
-    .popup input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .popup button {
-      margin-top: 10px;
-      padding: 10px;
-      width: 100%;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .popup button:hover {
-      background-color: #45a049;
-    }
-     /* Spinner Styles */
-    #spinner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .spinner {
-      border: 6px solid #ddd;
-      border-top: 6px solid #4CAF50;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
+            .header-bar .header-label {
+                font-size: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="spinner">
-    <div class="spinner"></div>
-  </div>
-  <header style="text-align: center; padding: 16px; background-color: #4CAF50; color: white;">
-    <h1>Class Management Solution</h1>
-  </header>
-  <main id="mainContent">
-    <div class="container">
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Enquiry/enqdetailform.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Enquiry.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Enquiry Form</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Admission/admhead.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Admission.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Admission Process</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Fees%20Details/feesfrontpage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Fees%20details.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Fees Details</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Teacher%20Staff%20Details/teacherstaffpage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Teacher.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Teacher/Staff Details</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="Student Details 2025-26/Income Expenses details/miss_ie_frontpage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Expenses.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Expenses Details</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Student%20Attendance/attendance_fontpage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/Attendance3.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Attendance Details</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Student%20Exam%20Record/examrecordfontpage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/examtestdetails.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Student Test Record</div>
-        </a>
-      </div>
-      <div class="card">
-        <a href="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Account/AccountSamFontPage.html">
-          <img src="https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Icon/accountsummary2.png" alt="Icon" style="width: 50px; height: 50px; padding: 10px;">
-          <div class="name">Account Summary</div>
-        </a>
-      </div>
+
+   <!-- Header Bar for Mobile -->
+<div class="header-bar">
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    <div class="header-label">Login Portal</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="close-btn" onclick="toggleSidebar()">×</div>
+    <h2>Login Portal</h2>
+    <div class="menu-item" onclick="handleMenuClick('admin')" id="adminBtn">👤 Admin</div>
+    <div class="menu-item" onclick="handleMenuClick('student')" id="studentBtn">🎓 Student</div>
+    <div class="menu-item" onclick="handleMenuClick('teacher')" id="teacherBtn">👩‍🏫 Teacher</div>
+    <div class="menu-item" onclick="handleMenuClick('staff')" id="staffBtn">👨‍💼 Staff</div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="login-container" id="loginContainer">
+        <h2 id="loginTitle">Admin Login</h2>
+        <input type="text" id="loginName" class="input-field" placeholder="Enter Admin Name">
+        <input type="password" id="loginPassword" class="input-field" placeholder="Enter Password">
+        <button class="login-btn" onclick="validateLogin()">Login</button>
     </div>
-  </main>
-  <script>
-    // Show spinner on page load and hide when loaded
-    window.addEventListener('load', () => {
-      const spinner = document.getElementById('spinner');
-      spinner.style.display = 'none';
+</div>
+
+<!-- Popup and Spinner -->
+<div id="popupMessage" class="popup"></div>
+<div id="spinnerOverlay" class="spinner-overlay">
+    <div class="spinner"></div>
+</div>
+
+<div id="successPopup" class="success-popup">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">Login Successful</h2>
+    <p class="success-message">You have successfully logged in</p>
+    <div class="passcode-container">
+        <div class="passcode-label">Your passcode is</div>
+        <div id="passcodeDisplay" class="passcode"></div>
+    </div>
+    <button class="continue-btn" id="continueBtn">Continue</button>
+</div>
+
+<script>
+    const config = {
+        scriptUrl: "https://script.google.com/macros/s/AKfycbzPug7SnPC_SLFAHtTTvJYSyNOAF6ayfQGfzpHcUxe2CFfP2ihIROg7b4FMqwfS3OEJ/exec",
+        spreadsheetId: "10YEaav-QEL19peIzut_fDol52cK1QTsxl449-oI9a74",
+        sheetName: "Login_Portal",
+        columns: {
+            admin: { name: 1, password: 2, branch: 3 },
+            student: { name: 5, password: 6, branch: 7 },
+            teacher: { name: 9, password: 10, branch: 11 },
+            staff: { name: 13, password: 14, branch: 15 },
+        }
+    };
+
+    // Track current login type
+    let currentLoginType = 'admin';
+
+    // Function to handle menu item clicks
+function handleMenuClick(role) {
+    // Reset all input fields
+    document.getElementById('loginName').value = '';
+    document.getElementById('loginPassword').value = '';
+    
+    currentLoginType = role;
+    const loginTitle = document.getElementById('loginTitle');
+    const nameInput = document.getElementById('loginName');
+    const passwordInput = document.getElementById('loginPassword');
+    
+    // Update all menu items' active state
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
     });
-  </script>
+    document.getElementById(`${role}Btn`).classList.add('active');
+    
+    // Update login form based on role
+    switch(role) {
+        case 'admin':
+            loginTitle.textContent = 'Admin Login';
+            nameInput.placeholder = 'Enter Admin Name';
+            break;
+        case 'student':
+            loginTitle.textContent = 'Student Login';
+            nameInput.placeholder = 'Enter Student Name';
+            break;
+        case 'teacher':
+            loginTitle.textContent = 'Teacher Login';
+            nameInput.placeholder = 'Enter Teacher Name';
+            break;
+        case 'staff':
+            loginTitle.textContent = 'Staff Login';
+            nameInput.placeholder = 'Enter Staff Name';
+            break;
+    }
+}
+
+    // Function to toggle sidebar visibility on mobile
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+    }
+
+    async function validateLogin() {
+    const loginName = document.getElementById('loginName').value;
+    const loginPassword = document.getElementById('loginPassword').value;
+    const spinner = document.getElementById('spinnerOverlay');
+
+    if (!loginName || !loginPassword) {
+        showPopup('Please fill in all fields.', 'error');
+        return;
+    }
+
+    try {
+        spinner.style.display = "flex";
+        const columnConfig = config.columns[currentLoginType];
+
+        // First validate the login
+        const loginResponse = await fetch(
+            `${config.scriptUrl}?action=validateLogin&name=${encodeURIComponent(loginName)}` +
+            `&password=${encodeURIComponent(loginPassword)}` +
+            `&spreadsheetId=${config.spreadsheetId}` +
+            `&sheetName=${config.sheetName}` +
+            `&nameCol=${columnConfig.name}` +
+            `&passwordCol=${columnConfig.password}` +
+            `&branchCol=${columnConfig.branch}`
+        );
+        
+        const loginResult = await loginResponse.json();
+        
+        if (loginResult.status === "success") {
+            // Now fetch the passcode
+            const passcodeResponse = await fetch(
+                `${config.scriptUrl}?action=getPasscode&spreadsheetId=1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ&` +
+                `sheetName=Passcode&cell=A2`
+            );
+            
+            const passcodeResult = await passcodeResponse.json();
+            spinner.style.display = "none";
+            
+            if (passcodeResult.status === "success") {
+                // Show the success popup with passcode
+                document.getElementById('passcodeDisplay').textContent = passcodeResult.value;
+                const successPopup = document.getElementById('successPopup');
+                successPopup.style.display = 'block';
+                
+                // Handle continue button click
+                document.getElementById('continueBtn').onclick = function() {
+                    successPopup.style.display = 'none';
+                    handleSuccessfulLogin(loginName, loginResult.branch);
+                };
+                
+                // Auto-redirect after 15 seconds if user doesn't click continue
+                setTimeout(() => {
+                    if (successPopup.style.display !== 'none') {
+                        successPopup.style.display = 'none';
+                        handleSuccessfulLogin(loginName, loginResult.branch);
+                    }
+                }, 15000);
+            } else {
+                showPopup("Failed to retrieve passcode", "error");
+            }
+        } else {
+            spinner.style.display = "none";
+            showPopup(loginResult.message, "error");
+        }
+    } catch (error) {
+        spinner.style.display = "none";
+        showPopup("❌ Error connecting to server!", "error");
+        console.error("Error:", error);
+    }
+}
+
+    // Function to handle successful login redirection
+    function handleSuccessfulLogin(name, branch) {
+        const userBranch = branch ? branch.toString().trim().toLowerCase() : '';
+        const encodedName = encodeURIComponent(name);
+            
+            switch(currentLoginType) {
+            case 'student':
+                if (userBranch === "kamatghar") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Kamatghar/studDashboard.html?studentName=${encodedName}`;
+                } 
+                else if (userBranch === "naka") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Naka/studDashboard.html?studentName=${encodedName}`;
+                } 
+				else if (userBranch === "computer kamatghar") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Computer%20Kamatghar/studDashboard.html?studentName=${encodedName}`;
+                } 
+				else if (userBranch === "mithpada") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Mithpada/studDashboard.html?studentName=${encodedName}`;
+                } 
+                else {
+                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+                }
+                break;
+                
+            case 'admin':
+                if (userBranch === "kamatghar") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminKamatghar.html`;
+                } 
+                else if (userBranch === "naka") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminNaka.html`;
+                }
+                else if (userBranch === "computer kamatghar") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminComKamatghar.html`;
+                }
+				else if (userBranch === "mithpada") {
+                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminMithpada.html`;
+                }
+                else {
+                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+                }
+                break;
+                
+            case 'teacher':
+                if (userBranch === "kamatghar") {
+                    window.location.href = `Practice7.html?teacherName=${encodedName}`;
+                } 
+                else if (userBranch === "naka") {
+                    window.location.href = `Practice8.html?teacherName=${encodedName}`;
+                }
+                else if (userBranch === "computer kamatghar") {
+                    window.location.href = `Practice9.html?teacherName=${encodedName}`;
+                }
+				else if (userBranch === "mithpada") {
+                    window.location.href = `Pract4.html?teacherName=${encodedName}`;
+                }
+                else {
+                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+                }
+                break;
+                
+            case 'staff':
+                if (userBranch === "kamatghar") {
+                    window.location.href = `Practice10.html?staffName=${encodedName}`;
+                } 
+                else if (userBranch === "naka") {
+                    window.location.href = `Practice11.html?staffName=${encodedName}`;
+                }
+                else if (userBranch === "computer kamatghar") {
+                    window.location.href = `Practice12.html?staffName=${encodedName}`;
+                }
+				else if (userBranch === "mithpada") {
+                    window.location.href = `Pract5.html?staffName=${encodedName}`;
+                }
+                else {
+                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+                }
+                break;
+                
+            default:
+                showPopup("Invalid login type", "error");
+        }
+    }
+
+    // Function to show popup messages
+    function showPopup(message, type) {
+        const popup = document.getElementById('popupMessage');
+        popup.textContent = message;
+        popup.classList.add(type);
+        popup.style.display = 'block';
+        popup.style.opacity = '1';
+
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.classList.remove(type);
+            }, 500);
+        }, 3000);
+    }
+
+    // Set default view to Admin login
+    window.onload = function () {
+        document.getElementById('adminBtn').classList.add('active');
+    };
+</script>
 </body>
 </html>
