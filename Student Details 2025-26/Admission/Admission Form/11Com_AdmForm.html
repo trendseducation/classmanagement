@@ -25,7 +25,7 @@
       body {
         font-family: 'Roboto', sans-serif;
         background: linear-gradient(135deg, #a5f0b9, #2575fc);
-        height: 170vh;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -328,25 +328,31 @@
     </div>
 
    <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbx6vt4DIII_wg0u4Pr9aSehrpIjkgvfbW1rKXUwhDuyls3u3CWC0xGZKORYo33diCTw/exec";
+  // Configuration constants
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzHhl8zkryZ-QYGt3nSEp8G8IMOVTnnP2DTYC-hczpOM1deIa2H7p9lDsMvrUMLe4AV/exec";
+  const SPREADSHEET_ID = '1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ'; // Spreadsheet ID moved here
   const sheetName = "Adm_11Com"; // Change this to any sheet name
+  
+  // DOM elements
   const form = document.forms["submit-to-google-sheet"];
   const progressCircle = document.querySelector(".progress-circle");
-  const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
+  const submitButton = document.querySelector("button[type='submit']");
 
+  // Form submission handler
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     progressCircle.style.display = "block";
-    submitButton.disabled = true; // Disable the submit button
+    submitButton.disabled = true;
 
-    // Create FormData object and append sheetName
+    // Create FormData object and append sheetName and spreadsheetId
     var formData = new FormData(form);
-    formData.append("sheetName", sheetName); // Add sheetName to the request
+    formData.append("sheetName", sheetName);
+    formData.append("spreadsheetId", SPREADSHEET_ID);
 
     fetch(scriptURL, { method: "POST", body: formData })
       .then((response) => {
         progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button
+        submitButton.disabled = false;
         
         // Show success popup
         const successPopup = document.createElement("div");
@@ -369,7 +375,7 @@
       })
       .catch((error) => {
         progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button in case of error
+        submitButton.disabled = false;
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -378,31 +384,34 @@
       });
   });
   
+  // Email validation
   document.getElementById("email").addEventListener("input", function () {
     const emailInput = this;
     const emailError = document.getElementById("emailError");
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (emailPattern.test(emailInput.value)) {
-      emailError.style.display = "none"; // Hide error if valid
+      emailError.style.display = "none";
     } else {
-      emailError.style.display = "block"; // Show error if invalid
+      emailError.style.display = "block";
     }
   });
   
-   document.getElementById("contact_number").addEventListener("input", function () {
+  // Mobile number validation
+  document.getElementById("contact_number").addEventListener("input", function () {
     const mobileInput = this;
     const mobileError = document.getElementById("mobileError");
     const mobilePattern = /^[6789]\d{9}$/;
 
     if (mobilePattern.test(mobileInput.value)) {
-      mobileError.style.display = "none"; // Hide error if valid
+      mobileError.style.display = "none";
     } else {
-      mobileError.style.display = "block"; // Show error if invalid
+      mobileError.style.display = "block";
     }
   });
   
-   document.addEventListener("DOMContentLoaded", function () {
+  // Date of Birth validation
+  document.addEventListener("DOMContentLoaded", function () {
     const dobInput = document.getElementById("dob");
     const dobError = document.getElementById("dobError");
 
@@ -410,10 +419,10 @@
     const today = new Date();
     const minAge = 15;
     const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-    dobInput.setAttribute("max", maxDate.toISOString().split("T")[0]); // Restrict future dates
+    dobInput.setAttribute("max", maxDate.toISOString().split("T")[0]);
 
     dobInput.addEventListener("change", function () {
-      if (!this.value) return; // Ensure a date is selected
+      if (!this.value) return;
 
       const selectedDate = new Date(this.value);
       const ageDiff = today.getFullYear() - selectedDate.getFullYear();
@@ -425,10 +434,10 @@
               today.getDate() >= selectedDate.getDate())));
 
       if (!isOldEnough) {
-        dobError.style.display = "block"; // Show error if age < 15
-        this.value = ""; // Clear the invalid date
+        dobError.style.display = "block";
+        this.value = "";
       } else {
-        dobError.style.display = "none"; // Hide error if valid
+        dobError.style.display = "none";
 
         // Format date as DD-MM-YY and set back into input field
         const day = selectedDate.getDate().toString().padStart(2, "0");
@@ -442,7 +451,7 @@
     });
 
     dobInput.addEventListener("focus", function () {
-      this.type = "date"; // Show date picker when clicking the input field
+      this.type = "date";
     });
   });
 </script>
