@@ -25,7 +25,7 @@
       body {
         font-family: 'Roboto', sans-serif;
         background: linear-gradient(135deg, #a5f0b9, #2575fc);
-        height: 170vh;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -133,6 +133,137 @@
         font-weight: 600;
         margin-bottom: 20px;
       }
+	  .error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: none;
+}
+
+     /* Success Popup */
+.success-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4CAF50;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.5s;
+}
+
+.success-popup.fade-out {
+  opacity: 0;
+}
+
+.success-content i {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+/* Duplicate Record Popup */
+.duplicate-record-popup {
+  border-radius: 10px;
+  max-width: 500px;
+}
+
+.duplicate-record-title {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.duplicate-record-content {
+  font-size: 1.1em;
+  padding: 10px 0;
+}
+
+.duplicate-record-button {
+  background-color: #d32f2f !important;
+  padding: 8px 20px !important;
+  border-radius: 5px !important;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Error styling */
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+/* SweetAlert Popup Customization */
+.duplicate-error-popup {
+  border-radius: 10px;
+  max-width: 500px;
+}
+
+.duplicate-error-button {
+  background-color: #dc3545 !important;
+  padding: 8px 20px !important;
+  border-radius: 5px !important;
+}
+  /* Spinner Overlay Styles */
+  .submit-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: all 0.3s ease;
+  }
+  
+  .spinner-container {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .spinner-border {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 0.35em;
+    color: #4e73df;
+    animation: spin 1s linear infinite;
+  }
+  
+  .spinner-text {
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: #4e73df;
+    font-size: 1.1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
     </style>
   </head>
   <body>
@@ -316,135 +447,320 @@
             />
 			<i class="fas fa-sticky-note input-icon"></i>
               </div></div>
-        <button type="submit" class="btn btn-primary btn-block">
-          Submit
-        </button>
-      </form>
-      <div class="progress-circle">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
+        <!-- Add this overlay div right before your form closing tag -->
+<div class="submit-overlay" id="submitOverlay">
+  <div class="spinner-container">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-text">Submitting your data...</div>
+  </div>
+</div>
+
+<!-- Update your button to include an ID -->
+<button type="submit" class="btn btn-primary btn-block" id="submitButton">
+  Submit
+</button>
     </div>
 
-   <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbx6vt4DIII_wg0u4Pr9aSehrpIjkgvfbW1rKXUwhDuyls3u3CWC0xGZKORYo33diCTw/exec";
-  const sheetName = "Adm_12Sci"; // Change this to any sheet name
+  <script>
+  // Configuration constants
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxUewIkXkecljb3-_gw8aKtu8mZh5E-CkXxm1atKz5f0Fk9GZ_1ueSnUT9XyT21dHTA/exec";
+  const PRIMARY_SPREADSHEET_ID = '1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ';     // Admission ID
+  const SECONDARY_SPREADSHEET_ID = '1c9JGNaxXIbsPtTJLS5CcaHy1rEEE2iTyvDiV-xU1pJ0';   // Fees ID
+  const TERTIARY_SPREADSHEET_ID = '1w0o60GLAKWo7p4nXyOGDJbr5IMhvT6xn6eZeHD53kIE';    // Test ID
+  const FOURTH_SPREADSHEET_ID = '1lQzkr2u1s7cHpxMwZOW-ZJLaLPvoP24a5InFap9UidI';      // Attendance ID
+  
+  const primarySheetName = "Adm_12Sci";   // Admission SheetName
+  const secondarySheetName = "12thSci";   // Fees SheetName
+  const tertiarySheetName = "12th_Sci";   // Test SheetName
+  const fourthSheetNames = [
+    "June_25", "July_25", "Aug_25", "Sept_25", 
+    "Oct_25", "Nov_25", "Dec_25", "Jan_25",
+    "Feb_25", "Mar_25"
+  ];                                      // Attendance SheetName
+  
+  // DOM elements
   const form = document.forms["submit-to-google-sheet"];
-  const progressCircle = document.querySelector(".progress-circle");
-  const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
+  const submitButton = document.getElementById("submitButton");
+  const submitOverlay = document.getElementById("submitOverlay");
+  let existingRecords = [];
 
-  form.addEventListener("submit", (e) => {
+  // Initialize when page loads
+  document.addEventListener("DOMContentLoaded", async function() {
+    await fetchExistingRecords();
+    setupRealTimeValidation();
+    setupDOBValidation();
+  });
+
+  // Fetch existing records from primary Google Sheet
+  async function fetchExistingRecords() {
+    try {
+      const url = `${scriptURL}?action=getRecords&spreadsheetId=${PRIMARY_SPREADSHEET_ID}&sheetName=${primarySheetName}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data && data.records) {
+        existingRecords = data.records.map(record => ({
+          name: record[2]?.toString().toLowerCase().trim(),
+          dob: formatDateForComparison(record[5])
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching records:", error);
+    }
+  }
+
+  // Setup real-time validation for name and dob
+  function setupRealTimeValidation() {
+    const nameInput = document.getElementById("name");
+    const dobInput = document.getElementById("dob");
+    
+    nameInput.addEventListener("input", debounce(checkForDuplicate, 500));
+    dobInput.addEventListener("change", debounce(checkForDuplicate, 500));
+  }
+
+  // Check if the current name+dob combination exists
+  async function checkForDuplicate() {
+    const fullName = document.getElementById("name").value.trim().toLowerCase();
+    const dob = document.getElementById("dob").value;
+    
+    if (!fullName || !dob) return;
+    
+    const exists = await checkDuplicateInSheet(fullName, dob);
+    if (exists) {
+      showDuplicateError();
+    }
+  }
+
+  // Check duplicate directly in the sheet
+  async function checkDuplicateInSheet(fullName, dob) {
+    try {
+      const formattedDob = formatDateForComparison(dob);
+      
+      const localMatch = existingRecords.some(record => 
+        record.name === fullName.toLowerCase() && 
+        record.dob === formattedDob
+      );
+      
+      if (localMatch) return true;
+      
+      const url = `${scriptURL}?action=checkDuplicate&spreadsheetId=${PRIMARY_SPREADSHEET_ID}&sheetName=${primarySheetName}&fullName=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(formattedDob)}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.exists || false;
+    } catch (error) {
+      console.error("Error checking duplicate:", error);
+      return false;
+    }
+  }
+
+  // Form submission handler with all spreadsheet support
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    progressCircle.style.display = "block";
-    submitButton.disabled = true; // Disable the submit button
-
-    // Create FormData object and append sheetName
-    var formData = new FormData(form);
-    formData.append("sheetName", sheetName); // Add sheetName to the request
-
-    fetch(scriptURL, { method: "POST", body: formData })
-      .then((response) => {
-        progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button
+    
+    // Immediately show spinner and disable button
+    submitOverlay.style.display = "flex";
+    submitButton.disabled = true;
+    void submitOverlay.offsetHeight;
+    
+    setTimeout(async () => {
+      const fullName = document.getElementById("name").value.trim();
+      const dob = document.getElementById("dob").value;
+      
+      try {
+        // Validate full name format
+        const nameParts = fullName.split(/\s+/);
+        if (nameParts.length < 2) {
+          showFullNameError();
+          throw new Error("Invalid name format");
+        }
         
-        // Show success popup
-        const successPopup = document.createElement("div");
-        successPopup.classList.add("success-popup");
-        successPopup.innerHTML = "Submitted Successfully!";
+        // Final duplicate check
+        const isDuplicate = await checkDuplicateInSheet(fullName, dob);
+        if (isDuplicate) {
+          showDuplicateError();
+          throw new Error("Duplicate entry");
+        }
         
-        // Add the popup to the body
-        document.body.appendChild(successPopup);
-
-        // Close popup after 3 seconds
-        setTimeout(() => {
-          successPopup.classList.add("fade-out");
-          setTimeout(() => {
-            successPopup.remove();
-          }, 500);
-        }, 3000);
-
-        // Reset the form after submission
-        form.reset();
-      })
-      .catch((error) => {
-        progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button in case of error
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong. Please try again!',
+        // Prepare all form data objects
+        const formDataPrimary = new FormData(form);
+        formDataPrimary.append("sheetName", primarySheetName);
+        formDataPrimary.append("spreadsheetId", PRIMARY_SPREADSHEET_ID);
+        
+        const formDataSecondary = new FormData();
+        formDataSecondary.append("Name_of_Student", fullName);
+        formDataSecondary.append("sheetName", secondarySheetName);
+        formDataSecondary.append("spreadsheetId", SECONDARY_SPREADSHEET_ID);
+        
+        const formDataTertiary = new FormData();
+        formDataTertiary.append("Student Name", fullName); // Changed to match secondary
+        formDataTertiary.append("sheetName", tertiarySheetName);
+        formDataTertiary.append("spreadsheetId", TERTIARY_SPREADSHEET_ID);
+        
+        // Prepare all submission promises
+        const submissionPromises = [
+          fetch(scriptURL, { method: "POST", body: formDataPrimary }),
+          fetch(scriptURL, { method: "POST", body: formDataSecondary }),
+          fetch(scriptURL, { method: "POST", body: formDataTertiary })
+        ];
+        
+        // Add submissions for fourth spreadsheet sheets
+        fourthSheetNames.forEach(sheetName => {
+          const formDataFourth = new FormData();
+          formDataFourth.append("Student Name", fullName); // Changed to match secondary
+          formDataFourth.append("sheetName", sheetName);
+          formDataFourth.append("spreadsheetId", FOURTH_SPREADSHEET_ID);
+          submissionPromises.push(fetch(scriptURL, { method: "POST", body: formDataFourth }));
         });
-      });
+        
+        // Execute all submissions
+        const responses = await Promise.all(submissionPromises);
+        
+        // Check responses
+        if (!responses[0].ok) throw new Error("Primary submission failed");
+        if (!responses[1].ok) console.warn("Secondary submission warning");
+        if (!responses[2].ok) console.warn("Tertiary submission warning");
+        
+        // Check fourth spreadsheet submissions
+        for (let i = 3; i < responses.length; i++) {
+          if (!responses[i].ok) {
+            console.warn(`Fourth spreadsheet sheet ${fourthSheetNames[i-3]} submission warning`);
+          }
+        }
+        
+        showSuccessPopup();
+        form.reset();
+        await fetchExistingRecords();
+      } catch (error) {
+        if (!(error.message === "Invalid name format" || error.message === "Duplicate entry")) {
+          showErrorPopup('Something went wrong. Please try again!');
+        }
+      } finally {
+        submitOverlay.style.display = "none";
+        submitButton.disabled = false;
+      }
+    }, 50);
   });
-  
-  document.getElementById("email").addEventListener("input", function () {
-    const emailInput = this;
-    const emailError = document.getElementById("emailError");
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (emailPattern.test(emailInput.value)) {
-      emailError.style.display = "none"; // Hide error if valid
-    } else {
-      emailError.style.display = "block"; // Show error if invalid
-    }
-  });
-  
-   document.getElementById("contact_number").addEventListener("input", function () {
-    const mobileInput = this;
-    const mobileError = document.getElementById("mobileError");
-    const mobilePattern = /^[6789]\d{9}$/;
+  // Show duplicate error message
+  function showDuplicateError() {
+    Swal.fire({
+      title: 'Form Already Submitted',
+      text: 'The form is already submitted with this name and date of birth.',
+      icon: 'error',
+      confirmButtonText: 'OK',
+      customClass: {
+        popup: 'duplicate-error-popup',
+        confirmButton: 'duplicate-error-button'
+      }
+    });
+    
+    document.getElementById("name").classList.add("is-invalid");
+    document.getElementById("dob").classList.add("is-invalid");
+  }
 
-    if (mobilePattern.test(mobileInput.value)) {
-      mobileError.style.display = "none"; // Hide error if valid
+  // Format date for comparison (YYYY-MM-DD)
+  function formatDateForComparison(dateString) {
+    if (!dateString) return '';
+    
+    // Handle both YYYYMMDD format (from sheet) and YYYY-MM-DD format (from input)
+    let date;
+    if (/^\d{8}$/.test(dateString)) {
+      // Format from sheet (YYYYMMDD)
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6);
+      const day = dateString.substring(6, 8);
+      date = new Date(`${year}-${month}-${day}`);
     } else {
-      mobileError.style.display = "block"; // Show error if invalid
+      // Format from input (YYYY-MM-DD)
+      date = new Date(dateString);
     }
-  });
-  
-   document.addEventListener("DOMContentLoaded", function () {
+    
+    if (isNaN(date.getTime())) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Debounce function to limit API calls
+  function debounce(func, wait) {
+    let timeout;
+    return function() {
+      const context = this, args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        func.apply(context, args);
+      }, wait);
+    };
+  }
+
+  // Show full name error
+  function showFullNameError() {
+    const fullNameError = document.getElementById("fullNameError") || createFullNameErrorElement();
+    fullNameError.style.display = "block";
+    document.getElementById("name").focus();
+  }
+
+  // Create full name error element
+  function createFullNameErrorElement() {
+    const errorElement = document.createElement("div");
+    errorElement.id = "fullNameError";
+    errorElement.className = "error-message";
+    errorElement.textContent = "Please enter both your name and surname (e.g., Vikas Yadav)";
+    document.getElementById("name").parentNode.parentNode.appendChild(errorElement);
+    return errorElement;
+  }
+
+  // Show success popup
+  function showSuccessPopup() {
+    Swal.fire({
+      title: 'Success!',
+      text: 'Form submitted successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  // Show error popup
+  function showErrorPopup(message) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+    });
+  }
+
+  // Setup Date of Birth validation
+  function setupDOBValidation() {
     const dobInput = document.getElementById("dob");
     const dobError = document.getElementById("dobError");
-
-    // Set max date (user must be at least 15 years old)
     const today = new Date();
     const minAge = 15;
     const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-    dobInput.setAttribute("max", maxDate.toISOString().split("T")[0]); // Restrict future dates
+    dobInput.setAttribute("max", maxDate.toISOString().split("T")[0]);
 
-    dobInput.addEventListener("change", function () {
-      if (!this.value) return; // Ensure a date is selected
-
+    dobInput.addEventListener("change", function() {
+      if (!this.value) return;
       const selectedDate = new Date(this.value);
       const ageDiff = today.getFullYear() - selectedDate.getFullYear();
-      const isOldEnough =
-        ageDiff > minAge ||
-        (ageDiff === minAge &&
-          (today.getMonth() > selectedDate.getMonth() ||
-            (today.getMonth() === selectedDate.getMonth() &&
-              today.getDate() >= selectedDate.getDate())));
+      const isOldEnough = ageDiff > minAge || 
+        (ageDiff === minAge && today.getMonth() > selectedDate.getMonth()) || 
+        (ageDiff === minAge && today.getMonth() === selectedDate.getMonth() && today.getDate() >= selectedDate.getDate());
 
       if (!isOldEnough) {
-        dobError.style.display = "block"; // Show error if age < 15
-        this.value = ""; // Clear the invalid date
+        dobError.style.display = "block";
+        this.value = "";
       } else {
-        dobError.style.display = "none"; // Hide error if valid
-
-        // Format date as DD-MM-YY and set back into input field
-        const day = selectedDate.getDate().toString().padStart(2, "0");
-        const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
-        const year = selectedDate.getFullYear()
-
-        // Convert the input field to text format to show formatted date
-        this.type = "text";
-        this.value = `${year}-${month}-${day}`;
+        dobError.style.display = "none";
       }
     });
 
-    dobInput.addEventListener("focus", function () {
-      this.type = "date"; // Show date picker when clicking the input field
+    dobInput.addEventListener("focus", function() {
+      this.type = "date";
     });
-  });
+  }
 </script>
   </body>
 </html>
