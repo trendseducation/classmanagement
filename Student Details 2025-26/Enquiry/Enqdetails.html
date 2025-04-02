@@ -649,8 +649,9 @@
 </div>
 
    <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbyKN1azl4ykdwUfPUtvDidj5cGd1sky2z9y2esHkaPeR9ymeRS0HHOiUQwJTpbttW_G/exec";
-const sheetName = "Enq_Form"; // Change this to any sheet name
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxUewIkXkecljb3-_gw8aKtu8mZh5E-CkXxm1atKz5f0Fk9GZ_1ueSnUT9XyT21dHTA/exec";
+  const SPREADSHEET_ID = '10YEaav-QEL19peIzut_fDol52cK1QTsxl449-oI9a74'; // Spreadsheet ID moved here
+  const sheetName = "Enq_Form"; // Change this to any sheet name
 
 // Lottie Animations
 const successAnimation = "https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json"; // Replace with your Lottie URL
@@ -748,20 +749,20 @@ document.getElementById("popupClose").addEventListener("click", () => {
 
 // Fetch data from Google Sheet
 async function fetchData() {
-  showLoading();
-  try {
-    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
-    const result = await response.json();
-    if (result.success) {
-      renderTable(result.data);
-    } else {
-      showPopup(errorAnimation, result.message);
+    showLoading();
+    try {
+      const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
+      const result = await response.json();
+      if (result.success) {
+        renderTable(result.data);
+      } else {
+        showPopup(errorAnimation, result.message);
+      }
+    } catch (error) {
+      showPopup(errorAnimation, "Error fetching data: " + error.message);
     }
-  } catch (error) {
-    showPopup(errorAnimation, "Error fetching data: " + error.message);
+    hideLoading();
   }
-  hideLoading();
-}
 
 // Render table data
 function renderTable(data) {
@@ -793,7 +794,7 @@ function viewDetails(rowIndex) {
 async function loadDetails(rowIndex) {
   showLoading();
   try {
-    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
+    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
     const result = await response.json();
     const rowData = result.data[rowIndex - 1];
     document.getElementById("detailsId").textContent = rowIndex - 1;
@@ -850,7 +851,7 @@ document.getElementById("deleteButton").addEventListener('click', async () => {
     showLoading();
 
     try {
-      const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}&sheetName=${sheetName}`);
+      const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
       const result = await response.json();
       showPopup(successAnimation, result.message, false); // Show only Close button
       fetchData();
@@ -869,7 +870,7 @@ document.getElementById("deleteButton").addEventListener('click', async () => {
 // Load edit form with data
 function loadEditForm(rowIndex) {
   showLoading();
-  fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`)
+  fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`)
     .then(response => response.json())
     .then(result => {
       const rowData = result.data[rowIndex - 1];
@@ -924,7 +925,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
   try {
     showLoading();
     const updatesParam = encodeURIComponent(JSON.stringify(updates));
-    const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}&sheetName=${sheetName}`);
+    const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
     const result = await response.json();
     showPopup(successAnimation, result.message);
     showTab('tableView');
