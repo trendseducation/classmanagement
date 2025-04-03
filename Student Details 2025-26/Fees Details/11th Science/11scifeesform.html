@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Fees Form</title>
+    <title>11th Com Student Fees Form</title>
     <link
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
@@ -60,6 +60,15 @@
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
         border: 1px solid #ced4da;
       }
+	  
+	  .form-control2 {
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #ced4da;
+		background: white;
+      }
 	  .position-relative input{
 	  padding-left: 43px	  
 	  }
@@ -71,7 +80,7 @@
 	  padding-left: 40px	  
 	  }
 
-      .form-control:focus {
+      .form-control:focus, .form-control2:focus {
         box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
         border-color: #007bff;
       }
@@ -224,11 +233,250 @@
                 font-size: 0.85em;
             }
 			}
+      .success-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 16px;
+        animation: fadeIn 0.5s ease;
+      }
+      .success-popup.fade-out {
+        animation: fadeOut 0.5s ease;
+      }
+      h4 {
+        color: #6a11cb;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+	  .error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: none;
+}
+
+     /* Success Popup */
+.success-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4CAF50;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.5s;
+}
+
+.success-popup.fade-out {
+  opacity: 0;
+}
+
+.success-content i {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+/* Duplicate Record Popup */
+.duplicate-record-popup {
+  border-radius: 10px;
+  max-width: 500px;
+}
+
+.duplicate-record-title {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.duplicate-record-content {
+  font-size: 1.1em;
+  padding: 10px 0;
+}
+
+.duplicate-record-button {
+  background-color: #d32f2f !important;
+  padding: 8px 20px !important;
+  border-radius: 5px !important;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Error styling */
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+/* SweetAlert Popup Customization */
+.duplicate-error-popup {
+  border-radius: 10px;
+  max-width: 500px;
+}
+
+.duplicate-error-button {
+  background-color: #dc3545 !important;
+  padding: 8px 20px !important;
+  border-radius: 5px !important;
+}
+  /* Spinner Overlay Styles */
+  .submit-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: all 0.3s ease;
+  }
+  
+  .spinner-container {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .spinner-border {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 0.35em;
+    color: #4e73df;
+    animation: spin 1s linear infinite;
+  }
+  
+  .spinner-text {
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: #4e73df;
+    font-size: 1.1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Full-Screen Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            height: 80%;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-in-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .popup-content h3 {
+            margin: 0;
+            padding-bottom: 10px;
+            color: #007bff;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+        .student-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            display: none;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .student-list div {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 300;
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid #007bff;
+        }
+        .student-list div:hover {
+            background: #007bff;
+            color: white;
+        }
+        .studspinner {
+            font-size: 26px;
+            color: red;
+            margin-top: 20px;
+        }
+		checking-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #000;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
     </style>
   </head>
   <body>
-      <div class="form-container">
-        <h4 class="text-center mb-4">11th Science Fees Collection Form</h4>
+    <div class="form-container">
+        <h4 class="text-center mb-4">11th Commerce Fees Collection Form</h4>
         <form id="submitform" oninput="calculateValues()">
 		
 		<div class="form-group">
@@ -240,16 +488,19 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="name">Student Name: <span style="color: red;">*</span></label>
-            <input
-              class="form-control"
-              type="text"
-              name="Name_of_Student"
-              id="name"
-              placeholder="Enter Full Name"
-              required
-            />
-          </div> 
+  <label for="text_dropdown">Student Name: <span style="color: red;">*</span></label>
+  <div class="form-control2" onclick="openPopup()" name="Name_of_Student_display" id="Name_of_Student_display" readonly required>Select Student Name</div>
+  <input type="hidden" name="Name_of_Student" id="Name_of_Student" required>
+</div> 
+		  
+		  <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h3>Select Student Name</h3>
+            <div class="studspinner" id="spinner"><i class="fas fa-spinner fa-spin"></i> Please Wait...</div>
+            <div class="student-list" id="studentList"></div>
+        </div>
+    </div>
 		  
 		  			<!-- Installment HTML code -->
 			<div class="containererspage33">
@@ -476,86 +727,270 @@
             <input class="form-control" name="Total_fees" type="number" id="Total_fees" placeholder="Enter Amount" required>
 			<label for="Note">Note:</label>
             <input class="form-control" name="Note" type="text" id="Note" placeholder="Types any Information">
-			
-          <button type="submit" class="btn btn-primary btn-block">
-            Submit
-          </button>
-        </form>
-        <div class="progress-circle">
-          <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </div>
-    </div>
-	<script src="installmentfunction.js"></script>
-	<script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwIfyZKETkS0xYNqteFI-1yw6NjDE6A8un8Fs7nu55paPqcjSFb3zPzs86AMtVPZKI/exec";
-  const sheetName = "11thSci"; // Change this to any sheet name
-  const form = document.forms["submitform"];
-  const progressCircle = document.querySelector(".progress-circle");
-  const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    progressCircle.style.display = "block";
-    submitButton.disabled = true; // Disable the submit button
-
-    // Create FormData object and append sheetName
-    var formData = new FormData(form);
-    formData.append("sheetName", sheetName); // Add sheetName to the request
-
-    fetch(scriptURL, { method: "POST", body: formData })
-      .then((response) => {
-        progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button
-        
-        // Show success popup
-        const successPopup = document.createElement("div");
-        successPopup.classList.add("success-popup");
-        successPopup.innerHTML = "Submitted Successfully!";
-        
-        // Add the popup to the body
-        document.body.appendChild(successPopup);
-
-        // Close popup after 3 seconds
-        setTimeout(() => {
-          successPopup.classList.add("fade-out");
-          setTimeout(() => {
-            successPopup.remove();
-          }, 500);
-        }, 3000);
-
-        // Reset the form after submission
-        form.reset();
-      })
-      .catch((error) => {
-        progressCircle.style.display = "none";
-        submitButton.disabled = false; // Re-enable the submit button in case of error
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong. Please try again!',
-        });
-      });
-  });
-  // Amount automatic Calculation Function
+<!-- Update your button to include an ID -->
+<button type="submit" class="btn btn-primary btn-block" id="submitButton">
+  Submit
+</button>
+    </div></form>
 	
-	             function calculateValues() {
-            const amount1 = parseFloat(document.getElementById('amount-1').value) || 0;
-            const amount2 = parseFloat(document.getElementById('amount-2').value) || 0;
-            const amount3 = parseFloat(document.getElementById('amount-3').value) || 0;
-			const amount4 = parseFloat(document.getElementById('amount-4').value) || 0;
-			const amount5 = parseFloat(document.getElementById('amount-5').value) || 0;
-			const totalFees = parseFloat(document.getElementById('Total_fees').value) || 0;
-
-            const TotalfeesRec = amount1 + amount2 + amount3 + amount4 + amount5;
-            const Bal_Fees = totalFees - TotalfeesRec;
-
-            document.getElementById('TotalfeesRec').value = TotalfeesRec.toFixed(2);
-            document.getElementById('Bal_Fees').value = Bal_Fees.toFixed(2);
-        }
+	        <!-- Add this overlay div right before your form closing tag -->
+<div class="submit-overlay" id="submitOverlay">
+  <div class="spinner-container">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-text">Submitting your data...</div>
+  </div>
+</div>
+	<script src="installmentfunction.js"></script>
+<script>
+  // Configuration constants
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzHwRnjIEbhEojjqvBQ5njUIg0b05Qte2Dpwkl6SV-9zBsXuKw0vQhj7dckkXSqSqr3/exec";
+  const SPREADSHEET_ID = '1c9JGNaxXIbsPtTJLS5CcaHy1rEEE2iTyvDiV-xU1pJ0';
+  const sheetName = "11thSci";
+  const ADMSPREADSHEET_ID = '1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ';
+  const adm_sheetName = "Adm_11Sci";
   
+  // DOM elements
+  const form = document.forms["submitform"];
+  const submitButton = document.getElementById("submitButton");
+  const submitOverlay = document.getElementById("submitOverlay");
+  const studentNameDisplay = document.getElementById("Name_of_Student_display");
+  const studentNameInput = document.getElementById("Name_of_Student");
+  let existingRecords = [];
+
+  // Initialize when page loads
+  document.addEventListener("DOMContentLoaded", async function() {
+    await fetchExistingRecords();
+    
+    // Add event listeners for amount calculation
+    document.getElementById('amount-1').addEventListener('input', calculateValues);
+    document.getElementById('amount-2').addEventListener('input', calculateValues);
+    document.getElementById('amount-3').addEventListener('input', calculateValues);
+    document.getElementById('amount-4').addEventListener('input', calculateValues);
+    document.getElementById('amount-5').addEventListener('input', calculateValues);
+    document.getElementById('Total_fees').addEventListener('input', calculateValues);
+  });
+
+  // Fetch existing records from Google Sheet
+  async function fetchExistingRecords() {
+    try {
+      const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data && data.records) {
+        existingRecords = data.records;
+      }
+    } catch (error) {
+      console.error("Error fetching records:", error);
+    }
+  }
+
+  // Check if student already exists in the sheet
+  async function checkStudentExists(studentName) {
+    try {
+      // Show checking spinner
+      const originalContent = studentNameDisplay.innerHTML;
+      studentNameDisplay.innerHTML = `
+        <span class="checking-status">
+          <span class="checking-spinner"></span>
+          Verifying student...
+        </span>
+      `;
+      
+      const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      // Restore original content
+      studentNameDisplay.innerHTML = originalContent;
+      
+      if (data && data.records) {
+        return data.records.some(record => 
+          record.Name_of_Student && record.Name_of_Student.toLowerCase() === studentName.toLowerCase()
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking student:", error);
+      studentNameDisplay.textContent = studentName; // Restore student name on error
+      return false;
+    }
+  }
+
+  // Form submission handler with instant spinner
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    // Validate student name is selected
+    const studentName = studentNameInput.value;
+    if (!studentName || studentName === '') {
+      showErrorPopup('Please select a student name');
+      return;
+    }
+    
+    // Immediately show spinner and disable button
+    submitOverlay.style.display = "flex";
+    submitButton.disabled = true;
+    
+    try {
+      // Show checking status
+      const originalContent = studentNameDisplay.innerHTML;
+      studentNameDisplay.innerHTML = `
+        <span class="checking-status">
+          <span class="checking-spinner"></span>
+          Verifying student...
+        </span>
+      `;
+      
+      // Check if student already exists
+      const studentExists = await checkStudentExists(studentName);
+      if (studentExists) {
+        studentNameDisplay.textContent = studentName; // Restore the name
+        showErrorPopup('Student already exists. Kindly update fees details.');
+        return;
+      }
+      
+      // If student doesn't exist, proceed with submission
+      const formData = new FormData(form);
+      formData.append("sheetName", sheetName);
+      formData.append("spreadsheetId", SPREADSHEET_ID);
+
+      const response = await fetch(scriptURL, { 
+        method: "POST", 
+        body: formData 
+      });
+      
+      if (!response.ok) throw new Error("Network response was not ok");
+      
+      showSuccessPopup();
+      form.reset();
+      // Reset the student name display
+      studentNameDisplay.textContent = 'Select Student Name';
+      studentNameInput.value = '';
+      await fetchExistingRecords();
+    } catch (error) {
+      showErrorPopup('Something went wrong. Please try again!');
+      console.error('Submission error:', error);
+      // Restore the student name display in case of error
+      studentNameDisplay.textContent = studentName;
+    } finally {
+      submitOverlay.style.display = "none";
+      submitButton.disabled = false;
+    }
+  });
+
+  // Show success popup
+  function showSuccessPopup() {
+    Swal.fire({
+      title: 'Success!',
+      text: 'Form submitted successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  // Show error popup
+  function showErrorPopup(message) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+    });
+  }
+  
+  // Amount automatic Calculation Function
+  function calculateValues() {
+    const amount1 = parseFloat(document.getElementById('amount-1').value) || 0;
+    const amount2 = parseFloat(document.getElementById('amount-2').value) || 0;
+    const amount3 = parseFloat(document.getElementById('amount-3').value) || 0;
+    const amount4 = parseFloat(document.getElementById('amount-4').value) || 0;
+    const amount5 = parseFloat(document.getElementById('amount-5').value) || 0;
+    const totalFees = parseFloat(document.getElementById('Total_fees').value) || 0;
+
+    const TotalfeesRec = amount1 + amount2 + amount3 + amount4 + amount5;
+    const Bal_Fees = totalFees - TotalfeesRec;
+
+    document.getElementById('TotalfeesRec').value = TotalfeesRec.toFixed(2);
+    document.getElementById('Bal_Fees').value = Bal_Fees.toFixed(2);
+  }
+  
+  function openPopup() {
+    document.getElementById("popup").style.display = "flex";
+    fetchStudentNames();
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+
+  async function fetchStudentNames() {
+    document.getElementById("spinner").style.display = "block";
+    document.getElementById("studentList").style.display = "none";
+
+    try {
+      const response = await fetch(`${scriptURL}?action=getColumnBData&spreadsheetId=${ADMSPREADSHEET_ID}&sheetName=${adm_sheetName}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+
+      let studentList = document.getElementById("studentList");
+      studentList.innerHTML = "";
+
+      if (Array.isArray(data)) {
+        data.forEach(name => {
+          if (name) {
+            let div = document.createElement("div");
+            div.textContent = name;
+            div.onclick = async function() {
+              document.getElementById("popup").style.display = "none";
+              const originalContent = studentNameDisplay.innerHTML;
+              studentNameDisplay.innerHTML = `
+                <span class="checking-status">
+                  <span class="checking-spinner"></span>
+                  Verifying student...
+                </span>
+              `;
+              
+              try {
+                const studentExists = await checkStudentExists(name);
+                if (studentExists) {
+                  showErrorPopup('Student already exists. Kindly update fees details.');
+                  studentNameDisplay.textContent = 'Select Student Name';
+                  studentNameInput.value = '';
+                } else {
+                  studentNameDisplay.textContent = name;
+                  studentNameInput.value = name;
+                }
+              } catch (error) {
+                console.error("Error checking student:", error);
+                studentNameDisplay.textContent = 'Select Student Name';
+                studentNameInput.value = '';
+                showErrorPopup("Error checking student. Please try again.");
+              }
+            };
+            studentList.appendChild(div);
+          }
+        });
+      } else {
+        throw new Error(data.error || "Unknown error occurred");
+      }
+
+      document.getElementById("spinner").style.display = "none";
+      studentList.style.display = "block";
+
+    } catch (error) {
+      console.error("Error fetching student names:", error);
+      showErrorPopup("Error fetching student names: " + error.message);
+      document.getElementById("spinner").style.display = "none";
+      closePopup();
+    }
+  }
 </script>
-  </body>
+</body>
 </html>
