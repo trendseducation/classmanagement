@@ -25,7 +25,7 @@
       body {
         font-family: 'Roboto', sans-serif;
         background: linear-gradient(135deg, #a5f0b9, #2575fc);
-        height: 120vh;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -145,6 +145,52 @@
         color: #007bff;
         cursor: pointer;
       }
+	  /* Spinner Overlay Styles */
+  .submit-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: all 0.3s ease;
+  }
+  
+  .spinner-container {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .spinner-border {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 0.35em;
+    color: #4e73df;
+    animation: spin 1s linear infinite;
+  }
+  
+  .spinner-text {
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: #4e73df;
+    font-size: 1.1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
     </style>
   </head>
   <body>
@@ -259,11 +305,10 @@
           </div>
         </div>
       </div>
-    </div>
-	
-	<script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzrMZ6PHbG5XMiC4o05by9bzT4p1u_cQkE88zMTT38Q4S3lh9rDQ8cicflIsNfIuaeObQ/exec";
-  const sheetName = "Class_Expenses"; // Change this to any sheet name
+ 	<script>
+	 const scriptURL = "https://script.google.com/macros/s/AKfycbzHwRnjIEbhEojjqvBQ5njUIg0b05Qte2Dpwkl6SV-9zBsXuKw0vQhj7dckkXSqSqr3/exec";
+  const spreadsheetId = "1vA2wS9S05TdOkjiHUZreBfW3mfSJDwqcbQFgAcJ7fI8";
+  const sheetName = "class_Expenses"; // Change this to any sheet name
   const form = document.forms["submit"];
   const progressCircle = document.querySelector(".progress-circle");
   const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
@@ -273,9 +318,10 @@
     progressCircle.style.display = "block";
     submitButton.disabled = true; // Disable the submit button
 
-    // Create FormData object and append sheetName
+    // Create FormData object and append sheetName and spreadsheetId
     var formData = new FormData(form);
-    formData.append("sheetName", sheetName); // Add sheetName to the request
+    formData.append("sheetName", sheetName);
+    formData.append("spreadsheetId", spreadsheetId);
 
     fetch(scriptURL, { method: "POST", body: formData })
       .then((response) => {
@@ -311,7 +357,22 @@
         });
       });
   });
+  
+  // Experience Function
+  
+  const dropdown = document.getElementById('experience');
+        const sections = document.querySelectorAll('.form-section');
+
+        dropdown.addEventListener('change', (event) => {
+            // Hide all sections
+            sections.forEach(section => section.classList.add('hidden'));
+
+            // Show the selected section
+            const selectedValue = event.target.value;
+            if (selectedValue) {
+                document.getElementById(selectedValue).classList.remove('hidden');
+            }
+        });
 </script>
-</style>
   </body>
 </html>
