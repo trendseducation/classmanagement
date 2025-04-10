@@ -25,7 +25,7 @@
       body {
         font-family: 'Roboto', sans-serif;
         background: linear-gradient(135deg, #a5f0b9, #2575fc);
-        height: 170vh;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -370,8 +370,9 @@
     </div>
 	
 	<script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzrMZ6PHbG5XMiC4o05by9bzT4p1u_cQkE88zMTT38Q4S3lh9rDQ8cicflIsNfIuaeObQ/exec";
-  const sheetName = "Teacher_Details"; // Change this to any sheet name
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzHwRnjIEbhEojjqvBQ5njUIg0b05Qte2Dpwkl6SV-9zBsXuKw0vQhj7dckkXSqSqr3/exec";
+  const spreadsheetId = "1vA2wS9S05TdOkjiHUZreBfW3mfSJDwqcbQFgAcJ7fI8";
+  const sheetName = "class_Expenses"; // Change this to any sheet name
   const form = document.forms["submit"];
   const progressCircle = document.querySelector(".progress-circle");
   const submitButton = document.querySelector("button[type='submit']"); // Get the submit button
@@ -381,9 +382,10 @@
     progressCircle.style.display = "block";
     submitButton.disabled = true; // Disable the submit button
 
-    // Create FormData object and append sheetName
+    // Create FormData object and append sheetName and spreadsheetId
     var formData = new FormData(form);
-    formData.append("sheetName", sheetName); // Add sheetName to the request
+    formData.append("sheetName", sheetName);
+    formData.append("spreadsheetId", spreadsheetId);
 
     fetch(scriptURL, { method: "POST", body: formData })
       .then((response) => {
