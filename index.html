@@ -369,6 +369,7 @@
                 color: #333;
             }
         }
+		
     </style>
 </head>
 <body>
@@ -381,12 +382,12 @@
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <div class="close-btn" onclick="toggleSidebar()">×</div>
+    <div class="close-btn" onclick="closeSidebar()">×</div>
     <h2>Login Portal</h2>
-    <div class="menu-item" onclick="handleMenuClick('admin')" id="adminBtn">👤 Admin</div>
-    <div class="menu-item" onclick="handleMenuClick('student')" id="studentBtn">🎓 Student</div>
-    <div class="menu-item" onclick="handleMenuClick('teacher')" id="teacherBtn">👩‍🏫 Teacher</div>
-    <div class="menu-item" onclick="handleMenuClick('staff')" id="staffBtn">👨‍💼 Staff</div>
+    <div class="menu-item" onclick="selectLoginType('admin')" id="adminBtn">👤 Admin</div>
+    <div class="menu-item" onclick="selectLoginType('student')" id="studentBtn">🎓 Student</div>
+    <div class="menu-item" onclick="selectLoginType('teacher')" id="teacherBtn">👩‍🏫 Teacher</div>
+    <div class="menu-item" onclick="selectLoginType('staff')" id="staffBtn">👨‍💼 Staff</div>
 </div>
 
 <!-- Main Content -->
@@ -417,71 +418,87 @@
 </div>
 
 <script>
-    const config = {
-        scriptUrl: "https://script.google.com/macros/s/AKfycbzPug7SnPC_SLFAHtTTvJYSyNOAF6ayfQGfzpHcUxe2CFfP2ihIROg7b4FMqwfS3OEJ/exec",
-        spreadsheetId: "10YEaav-QEL19peIzut_fDol52cK1QTsxl449-oI9a74",
-        sheetName: "Login_Portal",
-        columns: {
-            admin: { name: 1, password: 2, branch: 3 },
-            student: { name: 5, password: 6, branch: 7 },
-            teacher: { name: 9, password: 10, branch: 11 },
-            staff: { name: 13, password: 14, branch: 15 },
-        }
-    };
+   // Minified configuration object
+const config = {
+    scriptUrl: "https://script.google.com/macros/s/AKfycbzPug7SnPC_SLFAHtTTvJYSyNOAF6ayfQGfzpHcUxe2CFfP2ihIROg7b4FMqwfS3OEJ/exec",
+    spreadsheetId: "10YEaav-QEL19peIzut_fDol52cK1QTsxl449-oI9a74",
+    sheetName: "Login_Portal",
+    columns: {
+        admin: { name: 1, password: 2, branch: 3 },
+        student: { name: 5, password: 6, branch: 7 },
+        teacher: { name: 9, password: 10, branch: 11 },
+        staff: { name: 13, password: 14, branch: 15 }
+    }
+};
 
-    // Track current login type
-    let currentLoginType = 'admin';
+// Cache DOM elements
+const domCache = {
+    loginName: document.getElementById('loginName'),
+    loginPassword: document.getElementById('loginPassword'),
+    spinner: document.getElementById('spinnerOverlay'),
+    loginTitle: document.getElementById('loginTitle'),
+    popup: document.getElementById('popupMessage'),
+    successPopup: document.getElementById('successPopup'),
+    passcodeDisplay: document.getElementById('passcodeDisplay'),
+    continueBtn: document.getElementById('continueBtn'),
+    sidebar: document.getElementById('sidebar')
+};
 
-    // Function to handle menu item clicks
-function handleMenuClick(role) {
-    // Reset all input fields
-    document.getElementById('loginName').value = '';
-    document.getElementById('loginPassword').value = '';
-    
+let currentLoginType = 'admin';
+let isMobile = window.innerWidth <= 768;
+
+// Optimized selectLoginType function
+function selectLoginType(role) {
     currentLoginType = role;
-    const loginTitle = document.getElementById('loginTitle');
-    const nameInput = document.getElementById('loginName');
-    const passwordInput = document.getElementById('loginPassword');
+    const nameInput = domCache.loginName;
     
-    // Update all menu items' active state
+    // Reset fields
+    nameInput.value = '';
+    domCache.loginPassword.value = '';
+    
+    // Update active menu items
     document.querySelectorAll('.menu-item').forEach(item => {
-        item.classList.remove('active');
+        item.classList.toggle('active', item.id === `${role}Btn`);
     });
-    document.getElementById(`${role}Btn`).classList.add('active');
     
     // Update login form based on role
-    switch(role) {
-        case 'admin':
-            loginTitle.textContent = 'Admin Login';
-            nameInput.placeholder = 'Enter Admin Name';
-            break;
-        case 'student':
-            loginTitle.textContent = 'Student Login';
-            nameInput.placeholder = 'Enter Student Name';
-            break;
-        case 'teacher':
-            loginTitle.textContent = 'Teacher Login';
-            nameInput.placeholder = 'Enter Teacher Name';
-            break;
-        case 'staff':
-            loginTitle.textContent = 'Staff Login';
-            nameInput.placeholder = 'Enter Staff Name';
-            break;
-    }
+    const roleTitles = {
+        admin: ['Admin Login', 'Enter Admin Name'],
+        student: ['Student Login', 'Enter Student Name'],
+        teacher: ['Teacher Login', 'Enter Teacher Name'],
+        staff: ['Staff Login', 'Enter Staff Name']
+    };
+    
+    domCache.loginTitle.textContent = roleTitles[role][0];
+    nameInput.placeholder = roleTitles[role][1];
+    
+    // Close sidebar if on mobile
+    if (isMobile) domCache.sidebar.classList.remove('active');
 }
 
-    // Function to toggle sidebar visibility on mobile
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('active');
-    }
+function toggleSidebar() {
+    domCache.sidebar.classList.toggle('active');
+}
 
-    async function validateLogin() {
-    const loginName = document.getElementById('loginName').value;
-    const loginPassword = document.getElementById('loginPassword').value;
-    const spinner = document.getElementById('spinnerOverlay');
+function closeSidebar() {
+    domCache.sidebar.classList.remove('active');
+}
 
-    if (!loginName || !loginPassword) {
+// Debounced resize handler
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        isMobile = window.innerWidth <= 768;
+    }, 100);
+});
+
+async function validateLogin() {
+    const { loginName, loginPassword, spinner } = domCache;
+    const name = loginName.value.trim();
+    const password = loginPassword.value.trim();
+
+    if (!name || !password) {
         showPopup('Please fill in all fields.', 'error');
         return;
     }
@@ -489,55 +506,61 @@ function handleMenuClick(role) {
     try {
         spinner.style.display = "flex";
         const columnConfig = config.columns[currentLoginType];
-
-        // First validate the login
-        const loginResponse = await fetch(
-            `${config.scriptUrl}?action=validateLogin&name=${encodeURIComponent(loginName)}` +
-            `&password=${encodeURIComponent(loginPassword)}` +
-            `&spreadsheetId=${config.spreadsheetId}` +
-            `&sheetName=${config.sheetName}` +
-            `&nameCol=${columnConfig.name}` +
-            `&passwordCol=${columnConfig.password}` +
-            `&branchCol=${columnConfig.branch}`
-        );
         
+        // Construct URL more efficiently
+        const params = new URLSearchParams({
+            action: 'validateLogin',
+            name: name,
+            password: password,
+            spreadsheetId: config.spreadsheetId,
+            sheetName: config.sheetName,
+            nameCol: columnConfig.name,
+            passwordCol: columnConfig.password,
+            branchCol: columnConfig.branch
+        });
+
+        const loginResponse = await fetch(`${config.scriptUrl}?${params.toString()}`);
         const loginResult = await loginResponse.json();
         
-        if (loginResult.status === "success") {
-            // Now fetch the passcode
-            const passcodeResponse = await fetch(
-                `${config.scriptUrl}?action=getPasscode&spreadsheetId=1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ&` +
-                `sheetName=Passcode&cell=A2`
-            );
-            
-            const passcodeResult = await passcodeResponse.json();
-            spinner.style.display = "none";
-            
-            if (passcodeResult.status === "success") {
-                // Show the success popup with passcode
-                document.getElementById('passcodeDisplay').textContent = passcodeResult.value;
-                const successPopup = document.getElementById('successPopup');
-                successPopup.style.display = 'block';
-                
-                // Handle continue button click
-                document.getElementById('continueBtn').onclick = function() {
-                    successPopup.style.display = 'none';
-                    handleSuccessfulLogin(loginName, loginResult.branch);
-                };
-                
-                // Auto-redirect after 15 seconds if user doesn't click continue
-                setTimeout(() => {
-                    if (successPopup.style.display !== 'none') {
-                        successPopup.style.display = 'none';
-                        handleSuccessfulLogin(loginName, loginResult.branch);
-                    }
-                }, 15000);
-            } else {
-                showPopup("Failed to retrieve passcode", "error");
-            }
-        } else {
+        if (loginResult.status !== "success") {
             spinner.style.display = "none";
             showPopup(loginResult.message, "error");
+            return;
+        }
+
+        // Fetch passcode
+        const passcodeParams = new URLSearchParams({
+            action: 'getPasscode',
+            spreadsheetId: '1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ',
+            sheetName: 'Passcode',
+            cell: 'A2'
+        });
+
+        const passcodeResponse = await fetch(`${config.scriptUrl}?${passcodeParams.toString()}`);
+        const passcodeResult = await passcodeResponse.json();
+        spinner.style.display = "none";
+
+        if (passcodeResult.status === "success") {
+            domCache.passcodeDisplay.textContent = passcodeResult.value;
+            domCache.successPopup.style.display = 'block';
+            
+            // Single event listener with cleanup
+            const continueHandler = () => {
+                domCache.successPopup.style.display = 'none';
+                handleSuccessfulLogin(name, loginResult.branch);
+                domCache.continueBtn.removeEventListener('click', continueHandler);
+            };
+            
+            domCache.continueBtn.addEventListener('click', continueHandler);
+            
+            // Auto-redirect
+            setTimeout(() => {
+                if (domCache.successPopup.style.display !== 'none') {
+                    continueHandler();
+                }
+            }, 15000);
+        } else {
+            showPopup("Failed to retrieve passcode", "error");
         }
     } catch (error) {
         spinner.style.display = "none";
@@ -546,110 +569,63 @@ function handleMenuClick(role) {
     }
 }
 
-    // Function to handle successful login redirection
-    function handleSuccessfulLogin(name, branch) {
-        const userBranch = branch ? branch.toString().trim().toLowerCase() : '';
-        const encodedName = encodeURIComponent(name);
-            
-            switch(currentLoginType) {
-            case 'student':
-                if (userBranch === "kamatghar") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Kamatghar/studDashboard.html?studentName=${encodedName}`;
-                } 
-                else if (userBranch === "naka") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Naka/studDashboard.html?studentName=${encodedName}`;
-                } 
-				else if (userBranch === "computer kamatghar") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Computer%20Kamatghar/studDashboard.html?studentName=${encodedName}`;
-                } 
-				else if (userBranch === "mithpada") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Mithpada/studDashboard.html?studentName=${encodedName}`;
-                } 
-                else {
-                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
-                }
-                break;
-                
-            case 'admin':
-                if (userBranch === "kamatghar") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminKamatghar.html`;
-                } 
-                else if (userBranch === "naka") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminNaka.html`;
-                }
-                else if (userBranch === "computer kamatghar") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminComKamatghar.html`;
-                }
-				else if (userBranch === "mithpada") {
-                    window.location.href = `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminMithpada.html`;
-                }
-                else {
-                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
-                }
-                break;
-                
-            case 'teacher':
-                if (userBranch === "kamatghar") {
-                    window.location.href = `Practice7.html?teacherName=${encodedName}`;
-                } 
-                else if (userBranch === "naka") {
-                    window.location.href = `Practice8.html?teacherName=${encodedName}`;
-                }
-                else if (userBranch === "computer kamatghar") {
-                    window.location.href = `Practice9.html?teacherName=${encodedName}`;
-                }
-				else if (userBranch === "mithpada") {
-                    window.location.href = `Pract4.html?teacherName=${encodedName}`;
-                }
-                else {
-                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
-                }
-                break;
-                
-            case 'staff':
-                if (userBranch === "kamatghar") {
-                    window.location.href = `Practice10.html?staffName=${encodedName}`;
-                } 
-                else if (userBranch === "naka") {
-                    window.location.href = `Practice11.html?staffName=${encodedName}`;
-                }
-                else if (userBranch === "computer kamatghar") {
-                    window.location.href = `Practice12.html?staffName=${encodedName}`;
-                }
-				else if (userBranch === "mithpada") {
-                    window.location.href = `Pract5.html?staffName=${encodedName}`;
-                }
-                else {
-                    showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
-                }
-                break;
-                
-            default:
-                showPopup("Invalid login type", "error");
+function handleSuccessfulLogin(name, branch) {
+    const userBranch = branch ? branch.toString().trim().toLowerCase() : '';
+    const encodedName = encodeURIComponent(name);
+    const branchUrls = {
+        kamatghar: {
+            admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminKamatghar.html',
+            student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Kamatghar/studDashboard.html?studentName=${encodedName}`,
+            teacher: `Practice7.html?teacherName=${encodedName}`,
+            staff: `Practice10.html?staffName=${encodedName}`
+        },
+        naka: {
+            admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminNaka.html',
+            student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Naka/studDashboard.html?studentName=${encodedName}`,
+            teacher: `Practice8.html?teacherName=${encodedName}`,
+            staff: `Practice11.html?staffName=${encodedName}`
+        },
+        'computer kamatghar': {
+            admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminComKamatghar.html',
+            student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Computer%20Kamatghar/studDashboard.html?studentName=${encodedName}`,
+            teacher: `Practice9.html?teacherName=${encodedName}`,
+            staff: `Practice12.html?staffName=${encodedName}`
+        },
+        mithpada: {
+            admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminMithpada.html',
+            student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Mithpada/studDashboard.html?studentName=${encodedName}`,
+            teacher: `Pract4.html?teacherName=${encodedName}`,
+            staff: `Pract5.html?staffName=${encodedName}`
         }
-    }
-
-    // Function to show popup messages
-    function showPopup(message, type) {
-        const popup = document.getElementById('popupMessage');
-        popup.textContent = message;
-        popup.classList.add(type);
-        popup.style.display = 'block';
-        popup.style.opacity = '1';
-
-        setTimeout(() => {
-            popup.style.opacity = '0';
-            setTimeout(() => {
-                popup.style.display = 'none';
-                popup.classList.remove(type);
-            }, 500);
-        }, 3000);
-    }
-
-    // Set default view to Admin login
-    window.onload = function () {
-        document.getElementById('adminBtn').classList.add('active');
     };
+
+    const url = branchUrls[userBranch]?.[currentLoginType];
+    if (url) {
+        window.location.href = url;
+    } else {
+        showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+    }
+}
+
+function showPopup(message, type) {
+    const { popup } = domCache;
+    popup.textContent = message;
+    popup.className = type;
+    popup.style.display = 'block';
+    popup.style.opacity = '1';
+
+    setTimeout(() => {
+        popup.style.opacity = '0';
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, 500);
+    }, 3000);
+}
+
+// Initialize on DOMContentLoaded instead of window.onload for faster execution
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('adminBtn').classList.add('active');
+});
 </script>
 </body>
 </html>
