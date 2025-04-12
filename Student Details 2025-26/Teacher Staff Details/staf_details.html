@@ -409,7 +409,7 @@
     </style>
 </head>
 <body>
-    <h2>Staff Details</h2>
+    <h2>E-Gyan Staff Details</h2>
     <div class="tabs">
         <div class="tab active" data-tab="tableView">Staff List</div>
         <div class="tab" data-tab="detailsView">Staff Details</div>
@@ -606,7 +606,8 @@
 </div>
 
    <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzrMZ6PHbG5XMiC4o05by9bzT4p1u_cQkE88zMTT38Q4S3lh9rDQ8cicflIsNfIuaeObQ/exec";
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzHwRnjIEbhEojjqvBQ5njUIg0b05Qte2Dpwkl6SV-9zBsXuKw0vQhj7dckkXSqSqr3/exec";
+  const spreadsheetId = "1vA2wS9S05TdOkjiHUZreBfW3mfSJDwqcbQFgAcJ7fI8";
 const sheetName = "Staff_Details"; // Change this to any sheet name
 
 // Lottie Animations
@@ -707,7 +708,7 @@ document.getElementById("popupClose").addEventListener("click", () => {
 async function fetchData() {
   showLoading();
   try {
-    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
+    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
     const result = await response.json();
     if (result.success) {
       renderTable(result.data);
@@ -750,7 +751,7 @@ function viewDetails(rowIndex) {
 async function loadDetails(rowIndex) {
   showLoading();
   try {
-    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`);
+    const response = await fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
     const result = await response.json();
     const rowData = result.data[rowIndex - 1];
     document.getElementById("detailsId").textContent = rowIndex - 1;
@@ -825,7 +826,7 @@ document.getElementById("deleteButton").addEventListener('click', async () => {
     showLoading();
 
     try {
-      const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}&sheetName=${sheetName}`);
+      const response = await fetch(`${scriptURL}?action=deleteRow&row=${selectedRowData}&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
       const result = await response.json();
       showPopup(successAnimation, result.message, false); // Show only Close button
       fetchData();
@@ -844,7 +845,7 @@ document.getElementById("deleteButton").addEventListener('click', async () => {
 // Load edit form with data
 function loadEditForm(rowIndex) {
   showLoading();
-  fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}`)
+  fetch(`${scriptURL}?action=fetchData&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`)
     .then(response => response.json())
     .then(result => {
       const rowData = result.data[rowIndex - 1];
@@ -904,7 +905,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
   try {
     showLoading();
     const updatesParam = encodeURIComponent(JSON.stringify(updates));
-    const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}&sheetName=${sheetName}`);
+    const response = await fetch(`${scriptURL}?action=updateData&updates=${updatesParam}&sheetName=${sheetName}&spreadsheetId=${SPREADSHEET_ID}`);
     const result = await response.json();
     showPopup(successAnimation, result.message);
     showTab('tableView');
