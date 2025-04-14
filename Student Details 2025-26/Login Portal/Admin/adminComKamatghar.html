@@ -406,13 +406,10 @@
       }, 500); // Minimum show time for better UX
     });
 
-     function preventBack() {
-        window.history.back();
+    function Navigate(){   
+         window.location.replace('your link');
+        return false;
     }
-    setTimeout("preventForword()", 0);
-    window.onunload = function () {
-        null
-    };
   </script>
 </body>
 </html>
