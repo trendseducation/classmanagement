@@ -622,6 +622,14 @@ function showPopup(message, type) {
     }, 3000);
 }
 
+	 function preventBack() {
+        window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () {
+        null
+    };
+
 // Initialize on DOMContentLoaded instead of window.onload for faster execution
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('adminBtn').classList.add('active');
