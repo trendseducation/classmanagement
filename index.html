@@ -635,6 +635,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('adminBtn').classList.add('active');
 });
 
+	 // Prevent browser from caching the page
+  if (performance.navigation.type === 2) {
+    location.reload(true);
+  }
+
     // Optional: prevent back navigation after logout
   window.onpageshow = function(event) {
     if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
