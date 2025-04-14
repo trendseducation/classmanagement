@@ -22,6 +22,14 @@
         }
     }
 
+    	 function preventBack() {
+        window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () {
+        null
+    };
+
     // Execute authentication check on page load
     window.onload = checkAuthentication;
 
