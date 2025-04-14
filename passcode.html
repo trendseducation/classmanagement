@@ -219,22 +219,20 @@
                     authenticate(); // Call the authentication function
                 });
             }
-
- function preventBack() {
-        window.history.forward();
-    }
-    setTimeout("preventBack()", 0);
-    window.onunload = function () {
-        null
-    };
-
-
             // On protected pages, check authentication and start session timeout
             if (window.location.pathname.endsWith(DEFAULT_PAGE_URL)) {
                 checkAuthentication(); // Ensure the user is authenticated
                 startSessionTimeout(); // Start session timeout countdown
             }
         });
+
+         function preventBack() {
+        window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () {
+        null
+    };
     </script>
 </head>
 <body>
