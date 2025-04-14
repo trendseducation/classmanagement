@@ -111,150 +111,131 @@
         }
     </style>
     <script>
-    const appScriptURL = "https://script.google.com/macros/s/AKfycbyuAvhSmCOuPhFO-UVykElzpCo6GNBMfw6Gr_f9z6-Fw4zmuyrH31veeHUhhwAhPsOt/exec";
-    const TIMEOUT_DURATION = 2 * 60 * 1000; // 20 seconds session timeout
-    const PASSCODE_PAGE_URL = "passcode.html";
-    const DEFAULT_PAGE_URL = "index.html"; // Default page to redirect if no referrer
+        const appScriptURL = "https://script.google.com/macros/s/AKfycbyuAvhSmCOuPhFO-UVykElzpCo6GNBMfw6Gr_f9z6-Fw4zmuyrH31veeHUhhwAhPsOt/exec";
+        const TIMEOUT_DURATION = 2 * 60 * 1000; // 20 seconds session timeout
+        const PASSCODE_PAGE_URL = "passcode.html";
+        const DEFAULT_PAGE_URL = "index.html"; // Default page to redirect if no referrer
 
-    // Function to show popup with message
-    function showPopup(message) {
-        const popup = document.getElementById("popup");
-        const overlay = document.getElementById("overlay");
-        const popupMessage = document.getElementById("popup-message");
-        popupMessage.textContent = message;
-        popup.style.display = "block";
-        overlay.style.display = "block";
-    }
-
-    // Function to hide popup
-    function hidePopup() {
-        const popup = document.getElementById("popup");
-        const overlay = document.getElementById("overlay");
-        popup.style.display = "none";
-        overlay.style.display = "none";
-    }
-
-    // Function to prevent back navigation when session is active
-    function setupBackPrevention() {
-        function preventBack() {
-            window.history.forward();
+        // Function to show popup with message
+        function showPopup(message) {
+            const popup = document.getElementById("popup");
+            const overlay = document.getElementById("overlay");
+            const popupMessage = document.getElementById("popup-message");
+            popupMessage.textContent = message;
+            popup.style.display = "block";
+            overlay.style.display = "block";
         }
-        setTimeout("preventBack()", 0);
-        window.onunload = function () {
-            null
-        };
-    }
 
-    // Function to remove back navigation prevention when session expires
-    function removeBackPrevention() {
-        window.onunload = null;
-        window.history.forward = null;
-    }
+        // Function to hide popup
+        function hidePopup() {
+            const popup = document.getElementById("popup");
+            const overlay = document.getElementById("overlay");
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        }
 
-    // Function to handle authentication after submitting passcode
-    async function authenticate() {
-        const passcodeInput = document.getElementById("passcode").value;
+        // Function to handle authentication after submitting passcode
+        async function authenticate() {
+            const passcodeInput = document.getElementById("passcode").value;
 
-        // Show the spinner while the data is being fetched
-        document.getElementById("spinner").style.display = "block";
+            // Show the spinner while the data is being fetched
+            document.getElementById("spinner").style.display = "block";
 
-        try {
-            // Fetch the passcode from App Script
-            const response = await fetch(`${appScriptURL}?action=getPasscode`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch passcode.");
+            try {
+                // Fetch the passcode from App Script
+                const response = await fetch(`${appScriptURL}?action=getPasscode`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch passcode.");
+                }
+                const fetchedPasscode = await response.text();
+
+                // Hide the spinner after the request completes
+                document.getElementById("spinner").style.display = "none";
+
+                // Check if the input matches the fetched passcode
+                if (passcodeInput === fetchedPasscode) {
+                    // Store authentication status and session expiration
+                    const now = new Date().getTime();
+                    const expiration = now + TIMEOUT_DURATION; // Set session expiration
+                    localStorage.setItem("authenticated", "true");
+                    localStorage.setItem("expiration", expiration);
+
+                    // Redirect to the previous page or default to index.html
+                    const referrer = document.referrer || DEFAULT_PAGE_URL;
+                    location.href = referrer;
+                } else {
+                    showPopup("Invalid passcode. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error during passcode validation:", error);
+                document.getElementById("spinner").style.display = "none"; // Hide spinner on error
+                showPopup("An error occurred. Please try again later.");
             }
-            const fetchedPasscode = await response.text();
+        }
 
-            // Hide the spinner after the request completes
-            document.getElementById("spinner").style.display = "none";
+        // Check authentication status on page load
+        function checkAuthentication() {
+            const authenticated = localStorage.getItem("authenticated") === "true";
+            const expiration = parseInt(localStorage.getItem("expiration"), 10);
+            const now = new Date().getTime();
 
-            // Check if the input matches the fetched passcode
-            if (passcodeInput === fetchedPasscode) {
-                // Store authentication status and session expiration
-                const now = new Date().getTime();
-                const expiration = now + TIMEOUT_DURATION; // Set session expiration
-                localStorage.setItem("authenticated", "true");
-                localStorage.setItem("expiration", expiration);
-
-                // Activate back button prevention
-                setupBackPrevention();
-
-                // Redirect to the previous page or default to index.html
-                const referrer = document.referrer || DEFAULT_PAGE_URL;
-                location.href = referrer;
-            } else {
-                showPopup("Invalid passcode. Please try again.");
+            // If session is expired or not authenticated, redirect to passcode page
+            if (!authenticated || now > expiration) {
+                localStorage.setItem("timeoutRedirectURL", window.location.href); // Save current page for redirection
+                location.href = PASSCODE_PAGE_URL;
             }
-        } catch (error) {
-            console.error("Error during passcode validation:", error);
-            document.getElementById("spinner").style.display = "none"; // Hide spinner on error
-            showPopup("An error occurred. Please try again later.");
         }
-    }
 
-    // Check authentication status on page load
-    function checkAuthentication() {
-        const authenticated = localStorage.getItem("authenticated") === "true";
-        const expiration = parseInt(localStorage.getItem("expiration"), 10);
-        const now = new Date().getTime();
+        // Start session timeout countdown
+        function startSessionTimeout() {
+            const expiration = parseInt(localStorage.getItem("expiration"), 10);
+            const now = new Date().getTime();
+            const remainingTime = expiration - now;
 
-        // If session is expired or not authenticated, redirect to passcode page
-        if (!authenticated || now > expiration) {
-            localStorage.removeItem("authenticated");
-            localStorage.removeItem("expiration");
-            removeBackPrevention();
-            localStorage.setItem("timeoutRedirectURL", window.location.href); // Save current page for redirection
-            location.href = PASSCODE_PAGE_URL;
-        } else {
-            // Session is valid, activate back button prevention
-            setupBackPrevention();
-        }
-    }
+            // If time has already expired, redirect immediately
+            if (remainingTime <= 0) {
+                showPopup("Session expired. Redirecting to Passcode page.");
+                setTimeout(() => {
+                    location.href = PASSCODE_PAGE_URL;
+                }, 2000); // Redirect after 2 seconds
+                return;
+            }
 
-    // Start session timeout countdown
-    function startSessionTimeout() {
-        const expiration = parseInt(localStorage.getItem("expiration"), 10);
-        const now = new Date().getTime();
-        const remainingTime = expiration - now;
-
-        // If time has already expired, redirect immediately
-        if (remainingTime <= 0) {
-            showPopup("Session expired. Redirecting to Passcode page.");
+            // Set a timeout for the remaining session duration
             setTimeout(() => {
-                removeBackPrevention();
-                location.href = PASSCODE_PAGE_URL;
-            }, 2000); // Redirect after 2 seconds
-            return;
+                showPopup("Session expired. Redirecting to Passcode page.");
+                setTimeout(() => {
+                    location.href = PASSCODE_PAGE_URL;
+                }, 2000); // Redirect after 2 seconds
+            }, remainingTime);
         }
 
-        // Set a timeout for the remaining session duration
-        setTimeout(() => {
-            showPopup("Session expired. Redirecting to Passcode page.");
-            setTimeout(() => {
-                removeBackPrevention();
-                location.href = PASSCODE_PAGE_URL;
-            }, 2000); // Redirect after 2 seconds
-        }, remainingTime);
+        // Handle form submission on passcode page
+        document.addEventListener("DOMContentLoaded", () => {
+            const passcodeForm = document.getElementById("passcode-form");
+            if (passcodeForm) {
+                passcodeForm.addEventListener("submit", (event) => {
+                    event.preventDefault(); // Prevent form default submission
+                    authenticate(); // Call the authentication function
+                });
+            }
+
+ function preventBack() {
+        window.history.forward();
     }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () {
+        null
+    };
 
-    // Handle form submission on passcode page
-    document.addEventListener("DOMContentLoaded", () => {
-        const passcodeForm = document.getElementById("passcode-form");
-        if (passcodeForm) {
-            passcodeForm.addEventListener("submit", (event) => {
-                event.preventDefault(); // Prevent form default submission
-                authenticate(); // Call the authentication function
-            });
-        }
 
-        // On protected pages, check authentication and start session timeout
-        if (window.location.pathname.endsWith(DEFAULT_PAGE_URL)) {
-            checkAuthentication(); // Ensure the user is authenticated
-            startSessionTimeout(); // Start session timeout countdown
-        }
-    });
-</script>
+            // On protected pages, check authentication and start session timeout
+            if (window.location.pathname.endsWith(DEFAULT_PAGE_URL)) {
+                checkAuthentication(); // Ensure the user is authenticated
+                startSessionTimeout(); // Start session timeout countdown
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="passcode-container" style="justify-content: center; align-items: center;">
