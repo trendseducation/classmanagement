@@ -406,10 +406,17 @@
       }, 500); // Minimum show time for better UX
     });
 
-    function Navigate(){   
-         window.location.replace('your link');
-        return false;
+    // Prevent browser from caching the page
+  if (performance.navigation.type === 2) {
+    location.reload(true);
+  }
+
+    // Optional: prevent back navigation after logout
+  window.onpageshow = function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+      window.location.reload();
     }
+  };
   </script>
 </body>
 </html>
