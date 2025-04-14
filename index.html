@@ -635,10 +635,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('adminBtn').classList.add('active');
 });
 
-    function Navigate(){   
-         window.location.replace('your link');
-        return false;
+    // Optional: prevent back navigation after logout
+  window.onpageshow = function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+      window.location.reload();
     }
+  };
 </script>
 </body>
 </html>
