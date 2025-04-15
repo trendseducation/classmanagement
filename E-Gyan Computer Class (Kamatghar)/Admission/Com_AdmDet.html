@@ -473,6 +473,10 @@
                <td class="page2">Full Name</td>
                 <td id="detailsName"></td>
             </tr>
+		<tr>
+               <td class="page2">Course</td>
+                <td id="detailsCourse"></td>
+            </tr>
 			<tr>
                 <td class="page2">Personal Mobile No.</td>
                 <td id="detailsPMobNo"></td>
@@ -532,6 +536,8 @@
         <form id="editForm">
             <label for="editName">Full Name<span style="color: red;"> *</span></label>
             <input type="text" id="editName" required title="Enter vaild full name along with surname">
+		<label for="editName">Course<span style="color: red;"> *</span></label>
+            <input type="text" id="editCourse" required title="Enter vaild Course Name">
 			<label for="editEmail">Email<span style="color: red;"> *</span></label>
             <input type="email" id="editEmail" title="Enter a vaild Email address Example, example@gmail.com">
 			<label for="editPMobNo">Personal Mobile No</label>
@@ -738,6 +744,7 @@
       document.getElementById("detailsGender").textContent = rowData[6] || '';
       document.getElementById("detailsAddress").textContent = rowData[12] || '';
       document.getElementById("detailsNote").textContent = rowData[13] || '';
+	    document.getElementById("detailsCourse").textContent = rowData[14] || '';
     } catch (error) {
       showPopup(errorAnimation, "Error loading details: " + error.message, false); // Show only Close button
     }
@@ -813,6 +820,7 @@
         document.getElementById("editMarks").value = rowData[11];
         document.getElementById("editAddress").value = rowData[12] || '';
         document.getElementById("editNote").value = rowData[13] || '';
+	      document.getElementById("editCourse").value = rowData[14] || '';
       })
       .catch(error => showPopup(errorAnimation, "Error loading edit form: " + error.message))
       .finally(() => hideLoading());
@@ -833,7 +841,8 @@
       marks: document.getElementById("editMarks").value,
       gender: document.getElementById("editGender").value,
       address: document.getElementById("editAddress").value,
-      note: document.getElementById("editNote").value
+      note: document.getElementById("editNote").value,
+	    course: document.getElementById("editCourse").value
     };
     const updates = [
       { row: selectedRowData, col: 3, value: updatedData.name },
@@ -847,7 +856,8 @@
       { row: selectedRowData, col: 12, value: updatedData.marks },
       { row: selectedRowData, col: 7, value: updatedData.gender },
       { row: selectedRowData, col: 13, value: updatedData.address },
-      { row: selectedRowData, col: 14, value: updatedData.note }
+      { row: selectedRowData, col: 14, value: updatedData.note },
+	    { row: selectedRowData, col: 15, value: updatedData.course }
     ];
     try {
       showLoading();
