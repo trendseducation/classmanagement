@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Account Portal</title>
+	<script src="auth.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --error-color: #ff3333;
+            --warning-color: #ffc107;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+        
+        .container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+            background-color: var(--primary-light);
+            color: var(--dark-color);
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+            background-color: white;
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            padding-right: 35px;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .form-section:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-tertiary {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-tertiary:hover {
+            background-color: #3a7bd5;
+        }
+        
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .success {
+            background-color: rgba(75, 181, 67, 0.15);
+            color: var(--success-color);
+            border: 1px solid rgba(75, 181, 67, 0.3);
+            display: block;
+        }
+        
+        .error {
+            background-color: rgba(255, 51, 51, 0.15);
+            color: var(--error-color);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            display: block;
+        }
+        
+        .warning {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: var(--warning-color);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            display: block;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-title i {
+            margin-right: 10px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: var(--transition);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close-btn:hover {
+            background-color: #f1f1f1;
+            color: var(--error-color);
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .user-branch {
+            font-size: 13px;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .password-strength::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: var(--error-color);
+            transition: width 0.3s ease;
+        }
+        
+        .password-strength.weak::before {
+            width: 30%;
+            background: var(--error-color);
+        }
+        
+        .password-strength.medium::before {
+            width: 60%;
+            background: var(--warning-color);
+        }
+        
+        .password-strength.strong::before {
+            width: 100%;
+            background: var(--success-color);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                height: 46px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 25px 20px;
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .form-control {
+                padding: 12px 15px;
+            }
+            
+            .modal-content {
+                padding: 25px 20px;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+            
+            .btn {
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .slide-down {
+            animation: slideDown 0.4s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Floating label effect */
+        .float-label {
+            position: relative;
+        }
+        
+        .float-label label {
+            position: absolute;
+            top: 14px;
+            left: 15px;
+            color: #999;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        
+        .float-label input:focus + label,
+        .float-label input:not(:placeholder-shown) + label {
+            top: -8px;
+            left: 10px;
+            font-size: 12px;
+            background: white;
+            padding: 0 5px;
+            color: var(--primary-color);
+        }
+        
+        /* Toggle password visibility */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-shield"></i> Account Portal</h1>
+        </div>
+        
+        <form id="accountForm">
+            <div class="form-group">
+                <label for="userType"><i class="fas fa-users"></i> Select User Type</label>
+                <select class="form-control" id="userType" required>
+                    <option value="" selected disabled>Select User Type</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Staff">Staff</option>
+                </select>
+            </div>
+            
+            <!-- Admin Fields -->
+            <div id="adminFields" class="form-section" style="display: none;">
+                <div class="section-title"><i class="fas fa-user-cog"></i> Admin Information</div>
+                <div class="form-group float-label">
+                    <input type="text" class="form-control" id="adminName" placeholder=" " required>
+                    <label for="adminName">Admin Name</label>
+                </div>
+                
+                <div class="form-group float-label">
+                    <input type="password" class="form-control" id="adminPassword" placeholder=" " required>
+                    <label for="adminPassword">Password</label>
+                    <span class="password-toggle" onclick="togglePassword('adminPassword')">
+                        <i class="far fa-eye"></i>
+                    </span>
+                    <div class="password-strength" id="adminPasswordStrength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="branch"><i class="fas fa-map-marker-alt"></i> Select Branch</label>
+                    <select class="form-control" id="branch" required>
+                        <option value="" selected disabled>Select Branch</option>
+                        <option value="naka">Naka</option>
+                        <option value="kamatghar">Kamatghar</option>
+                        <option value="computer kamatghar">Computer Kamatghar</option>
+                        <option value="mithpada">Mithpada</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="adminSubmitBtn" style="display: none;">
+                    <span class="spinner" id="adminSubmitSpinner" style="display: none;"></span>
+                    <span id="adminSubmitText">Submit Admin</span>
+                </button>
+            </div>
+            
+            <!-- Student Fields -->
+            <div id="studentFields" class="form-section" style="display: none;">
+                <div class="section-title"><i class="fas fa-user-graduate"></i> Student Information</div>
+                <div class="form-group">
+                    <label for="studentName"><i class="fas fa-user"></i> Student Name</label>
+                    <select class="form-control" id="studentName" required>
+                        <option value="" selected disabled>Loading students...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group float-label">
+                    <input type="password" class="form-control" id="studentPassword" placeholder=" " required>
+                    <label for="studentPassword">Password</label>
+                    <span class="password-toggle" onclick="togglePassword('studentPassword')">
+                        <i class="far fa-eye"></i>
+                    </span>
+                    <div class="password-strength" id="studentPasswordStrength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentBranch"><i class="fas fa-map-marker-alt"></i> Select Branch</label>
+                    <select class="form-control" id="studentBranch" required>
+                        <option value="" selected disabled>Select Branch</option>
+                        <option value="naka">Naka</option>
+                        <option value="kamatghar">Kamatghar</option>
+                        <option value="computer kamatghar">Computer Kamatghar</option>
+                        <option value="mithpada">Mithpada</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="studentSubmitBtn" style="display: none;">
+                    <span class="spinner" id="studentSubmitSpinner" style="display: none;"></span>
+                    <span id="studentSubmitText">Submit Student</span>
+                </button>
+            </div>
+            
+            <!-- Teacher Fields -->
+            <div id="teacherFields" class="form-section" style="display: none;">
+                <div class="section-title"><i class="fas fa-chalkboard-teacher"></i> Teacher Information</div>
+                <div class="form-group">
+                    <label for="teacherName"><i class="fas fa-user-tie"></i> Teacher Name</label>
+                    <select class="form-control" id="teacherName" required>
+                        <option value="" selected disabled>Loading teachers...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group float-label">
+                    <input type="password" class="form-control" id="teacherPassword" placeholder=" " required>
+                    <label for="teacherPassword">Password</label>
+                    <span class="password-toggle" onclick="togglePassword('teacherPassword')">
+                        <i class="far fa-eye"></i>
+                    </span>
+                    <div class="password-strength" id="teacherPasswordStrength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="teacherBranch"><i class="fas fa-map-marker-alt"></i> Select Branch</label>
+                    <select class="form-control" id="teacherBranch" required>
+                        <option value="" selected disabled>Select Branch</option>
+                        <option value="naka">Naka</option>
+                        <option value="kamatghar">Kamatghar</option>
+                        <option value="computer kamatghar">Computer Kamatghar</option>
+                        <option value="mithpada">Mithpada</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="teacherSubmitBtn" style="display: none;">
+                    <span class="spinner" id="teacherSubmitSpinner" style="display: none;"></span>
+                    <span id="teacherSubmitText">Submit Teacher</span>
+                </button>
+            </div>
+            
+            <!-- Staff Fields -->
+            <div id="staffFields" class="form-section" style="display: none;">
+                <div class="section-title"><i class="fas fa-user-tie"></i> Staff Information</div>
+                <div class="form-group">
+                    <label for="staffName"><i class="fas fa-user"></i> Staff Name</label>
+                    <select class="form-control" id="staffName" required>
+                        <option value="" selected disabled>Loading staff...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group float-label">
+                    <input type="password" class="form-control" id="staffPassword" placeholder=" " required>
+                    <label for="staffPassword">Password</label>
+                    <span class="password-toggle" onclick="togglePassword('staffPassword')">
+                        <i class="far fa-eye"></i>
+                    </span>
+                    <div class="password-strength" id="staffPasswordStrength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staffBranch"><i class="fas fa-map-marker-alt"></i> Select Branch</label>
+                    <select class="form-control" id="staffBranch" required>
+                        <option value="" selected disabled>Select Branch</option>
+                        <option value="naka">Naka</option>
+                        <option value="kamatghar">Kamatghar</option>
+                        <option value="computer kamatghar">Computer Kamatghar</option>
+                        <option value="mithpada">Mithpada</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="staffSubmitBtn" style="display: none;">
+                    <span class="spinner" id="staffSubmitSpinner" style="display: none;"></span>
+                    <span id="staffSubmitText">Submit Staff</span>
+                </button>
+            </div>
+            
+            <button type="button" class="btn btn-tertiary" id="updateBtn">
+                <i class="fas fa-key" style="margin-right: 8px;"></i>
+                <span id="updateBtnText">Update Password</span>
+                <span class="spinner" id="updateBtnSpinner" style="display: none;"></span>
+            </button>
+            
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+
+    <!-- Update Password Modal -->
+    <div class="modal" id="updateModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-key"></i> Update Password</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="updateForm">
+                <div class="form-group">
+                    <label for="updateUserType"><i class="fas fa-users"></i> User Type</label>
+                    <select class="form-control" id="updateUserType" required>
+                        <option value="" selected disabled>Select Type</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Student">Student</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="updateUserName"><i class="fas fa-user"></i> User Name</label>
+                    <select class="form-control" id="updateUserName" required disabled>
+                        <option value="" selected disabled>Select Type First</option>
+                    </select>
+                </div>
+                
+                <div class="user-branch">
+                    <small id="selectedUserBranch"></small>
+                </div>
+                
+                <div class="form-group float-label">
+                    <input type="password" class="form-control" id="newPassword" placeholder=" " required>
+                    <label for="newPassword">New Password</label>
+                    <span class="password-toggle" onclick="togglePassword('newPassword')">
+                        <i class="far fa-eye"></i>
+                    </span>
+                    <div class="password-strength" id="newPasswordStrength"></div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelUpdate">
+                        <i class="fas fa-times" style="margin-right: 8px;"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn" id="confirmUpdateBtn">
+                        <span class="spinner" id="updateSpinner" style="display: none;"></span>
+                        <i class="fas fa-save" style="margin-right: 8px;"></i>
+                        <span id="updateText">Update</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="overlay" id="overlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+    
+<script>
+    const appConfig = {
+        spreadsheetId: "10YEaav-QEL19peIzut_fDol52cK1QTsxl449-oI9a74",
+        sheetName: "Login_Portal",
+        scriptUrl: "https://script.google.com/macros/s/AKfycbx7tQuROrhQ1jq7Fx1JIFbwC8bOo5ZSrT7Naj6PgpaY6ekmgZm7bKol64QfjlnFeQaSXA/exec"
+    };
+    
+    const studentDataSource = {
+        spreadsheetId: "1k7voQwSN-V2JvYtV_iWauCMQjTvculS8rwxtTkNnaUQ",
+        sheetName: "Adm_11Com",
+        column: 3 // Column C (3rd column)
+    };
+
+    const teacherDataSource = {
+        spreadsheetId: "1vA2wS9S05TdOkjiHUZreBfW3mfSJDwqcbQFgAcJ7fI8",
+        sheetName: "Teacher_Details",
+        column: 3 // Column C (3rd column)
+    };
+
+    const staffDataSource = {
+        spreadsheetId: "1vA2wS9S05TdOkjiHUZreBfW3mfSJDwqcbQFgAcJ7fI8",
+        sheetName: "Staff_Details",
+        column: 3 // Column C (3rd column)
+    };
+        
+    document.addEventListener('DOMContentLoaded', function() {
+        const userTypeSelect = document.getElementById('userType');
+        const adminFields = document.getElementById('adminFields');
+        const studentFields = document.getElementById('studentFields');
+        const teacherFields = document.getElementById('teacherFields');
+        const staffFields = document.getElementById('staffFields');
+        const accountForm = document.getElementById('accountForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitSpinner = document.getElementById('submitSpinner');
+        const submitText = document.getElementById('submitText');
+        const messageDiv = document.getElementById('message');
+        const overlay = document.getElementById('overlay');
+        const updateBtn = document.getElementById('updateBtn');
+        const updateBtnSpinner = document.getElementById('updateBtnSpinner');
+        const updateBtnText = document.getElementById('updateBtnText');
+        const updateModal = document.getElementById('updateModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelUpdate = document.getElementById('cancelUpdate');
+        const updateForm = document.getElementById('updateForm');
+        const updateUserType = document.getElementById('updateUserType');
+        const updateUserName = document.getElementById('updateUserName');
+        const confirmUpdateBtn = document.getElementById('confirmUpdateBtn');
+        const updateSpinner = document.getElementById('updateSpinner');
+        const updateText = document.getElementById('updateText');
+        
+        let usersList = [];
+
+        // Update the userType change event handler
+        userTypeSelect.addEventListener('change', function() {
+            if (this.value === 'Admin') {
+                adminFields.style.display = 'block';
+                studentFields.style.display = 'none';
+                adminSubmitBtn.style.display = 'inline-block';
+                studentSubmitBtn.style.display = 'none';
+                teacherFields.style.display = 'none';
+                teacherSubmitBtn.style.display = 'none';
+                staffFields.style.display = 'none';
+                staffSubmitBtn.style.display = 'none';
+            } else if (this.value === 'Student') {
+                adminFields.style.display = 'none';
+                studentFields.style.display = 'block';
+                adminSubmitBtn.style.display = 'none';
+                studentSubmitBtn.style.display = 'inline-block';
+                teacherFields.style.display = 'none';
+                teacherSubmitBtn.style.display = 'none';
+                staffFields.style.display = 'none';
+                staffSubmitBtn.style.display = 'none';
+                loadStudentNames();
+            } else if (this.value === 'Teacher') {
+                adminFields.style.display = 'none';
+                studentFields.style.display = 'none';
+                adminSubmitBtn.style.display = 'none';
+                studentSubmitBtn.style.display = 'none';
+                teacherFields.style.display = 'block';
+                teacherSubmitBtn.style.display = 'inline-block'; 
+                staffFields.style.display = 'none';
+                staffSubmitBtn.style.display = 'none';
+                loadTeacherNames();
+            } else if (this.value === 'Staff') {
+                adminFields.style.display = 'none';
+                studentFields.style.display = 'none';
+                adminSubmitBtn.style.display = 'none';
+                studentSubmitBtn.style.display = 'none';
+                teacherFields.style.display = 'none';
+                teacherSubmitBtn.style.display = 'none';
+                staffFields.style.display = 'block';
+                staffSubmitBtn.style.display = 'inline-block';
+                loadStaffNames();
+            } else {
+                adminFields.style.display = 'none';
+                studentFields.style.display = 'none';
+                adminSubmitBtn.style.display = 'none';
+                studentSubmitBtn.style.display = 'none';
+                teacherFields.style.display = 'none';
+                teacherSubmitBtn.style.display = 'none';
+                staffFields.style.display = 'none';
+                staffSubmitBtn.style.display = 'none';
+            }
+        });
+
+        // Function to load student names from the external sheet
+        function loadStudentNames() {
+            const studentNameSelect = document.getElementById('studentName');
+            studentNameSelect.innerHTML = '<option value="" selected disabled>Loading students...</option>';
+            studentNameSelect.disabled = true;
+            
+            fetch(`${appConfig.scriptUrl}?action=getExternalStudents&spreadsheetId=${encodeURIComponent(studentDataSource.spreadsheetId)}&sheetName=${encodeURIComponent(studentDataSource.sheetName)}&column=${studentDataSource.column}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success" && data.students && data.students.length > 0) {
+                    studentNameSelect.innerHTML = '<option value="" selected disabled>Select Student</option>';
+                    
+                    data.students.forEach(student => {
+                        if (student.name) {
+                            const option = document.createElement('option');
+                            option.value = student.name;
+                            option.textContent = student.name;
+                            studentNameSelect.appendChild(option);
+                        }
+                    });
+                    
+                    studentNameSelect.disabled = false;
+                } else {
+                    studentNameSelect.innerHTML = '<option value="" selected disabled>No students found</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading students:', error);
+                studentNameSelect.innerHTML = '<option value="" selected disabled>Error loading students</option>';
+            });
+        }
+
+        // Function to load teacher names from the external sheet
+        function loadTeacherNames() {
+            const teacherNameSelect = document.getElementById('teacherName');
+            teacherNameSelect.innerHTML = '<option value="" selected disabled>Loading teachers...</option>';
+            teacherNameSelect.disabled = true;
+            
+            fetch(`${appConfig.scriptUrl}?action=getExternalTeachers&spreadsheetId=${encodeURIComponent(teacherDataSource.spreadsheetId)}&sheetName=${encodeURIComponent(teacherDataSource.sheetName)}&column=${teacherDataSource.column}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success" && data.teachers && data.teachers.length > 0) {
+                    teacherNameSelect.innerHTML = '<option value="" selected disabled>Select Teacher</option>';
+                    
+                    data.teachers.forEach(teacher => {
+                        if (teacher.name) {
+                            const option = document.createElement('option');
+                            option.value = teacher.name;
+                            option.textContent = teacher.name;
+                            teacherNameSelect.appendChild(option);
+                        }
+                    });
+                    
+                    teacherNameSelect.disabled = false;
+                } else {
+                    teacherNameSelect.innerHTML = '<option value="" selected disabled>No teachers found</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading teachers:', error);
+                teacherNameSelect.innerHTML = '<option value="" selected disabled>Error loading teachers</option>';
+            });
+        }
+
+        // Function to load staff names from the external sheet
+        function loadStaffNames() {
+            const staffNameSelect = document.getElementById('staffName');
+            staffNameSelect.innerHTML = '<option value="" selected disabled>Loading staff...</option>';
+            staffNameSelect.disabled = true;
+            
+            fetch(`${appConfig.scriptUrl}?action=getExternalStaff&spreadsheetId=${encodeURIComponent(staffDataSource.spreadsheetId)}&sheetName=${encodeURIComponent(staffDataSource.sheetName)}&column=${staffDataSource.column}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success" && data.staff && data.staff.length > 0) {
+                    staffNameSelect.innerHTML = '<option value="" selected disabled>Select Staff</option>';
+                    
+                    data.staff.forEach(staff => {
+                        if (staff.name) {
+                            const option = document.createElement('option');
+                            option.value = staff.name;
+                            option.textContent = staff.name;
+                            staffNameSelect.appendChild(option);
+                        }
+                    });
+                    
+                    staffNameSelect.disabled = false;
+                } else {
+                    staffNameSelect.innerHTML = '<option value="" selected disabled>No staff found</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading staff:', error);
+                staffNameSelect.innerHTML = '<option value="" selected disabled>Error loading staff</option>';
+            });
+        }
+
+        // When user type changes in update modal
+        updateUserType.addEventListener('change', function() {
+            updateUserName.innerHTML = '<option value="" selected disabled>Loading...</option>';
+            updateUserName.disabled = true;
+            document.getElementById('selectedUserBranch').textContent = '';
+            
+            setTimeout(() => {
+                if (this.value && usersList.length > 0) {
+                    const filteredUsers = this.value === 'Admin' 
+                        ? usersList.filter(u => !u.isStudent && !u.isTeacher && !u.isStaff && u.name && u.password && u.branch)
+                        : this.value === 'Student'
+                            ? usersList.filter(u => u.isStudent && u.name && u.password && u.branch)
+                            : this.value === 'Teacher'
+                                ? usersList.filter(u => u.isTeacher && u.name && u.password && u.branch)
+                                : usersList.filter(u => u.isStaff && u.name && u.password && u.branch);
+                    
+                    updateUserName.innerHTML = filteredUsers.length > 0 
+                        ? '<option value="" selected disabled>Select User</option>'
+                        : '<option value="" selected disabled>No users found</option>';
+                    
+                    filteredUsers.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.name;
+                        option.textContent = user.name;
+                        updateUserName.appendChild(option);
+                    });
+                    
+                    updateUserName.disabled = false;
+                } else {
+                    updateUserName.innerHTML = '<option value="" selected disabled>Select Type First</option>';
+                    updateUserName.disabled = true;
+                }
+            }, 300);
+        });
+
+        // When user is selected in the update modal
+        updateUserName.addEventListener('change', function() {
+            const selectedUser = this.value;
+            if (selectedUser) {
+                const user = usersList.find(u => u.name === selectedUser);
+                if (user) {
+                    document.getElementById('selectedUserBranch').textContent = 
+                        `Branch: ${user.branch || 'Not specified'}`;
+                }
+            } else {
+                document.getElementById('selectedUserBranch').textContent = '';
+            }
+        });
+        
+        // Open update modal and fetch user list
+        updateBtn.addEventListener('click', function() {
+            // Show loading state on the button itself
+            updateBtn.disabled = true;
+            updateBtnSpinner.style.display = 'inline-block';
+            updateBtnText.style.display = 'none';
+            overlay.style.display = 'flex';
+            
+            // Fetch admins, students, teachers and staff
+            Promise.all([
+                fetch(`${appConfig.scriptUrl}?action=getAdmins&spreadsheetId=${encodeURIComponent(appConfig.spreadsheetId)}&sheetName=${encodeURIComponent(appConfig.sheetName)}`),
+                fetch(`${appConfig.scriptUrl}?action=getStudents&spreadsheetId=${encodeURIComponent(appConfig.spreadsheetId)}&sheetName=${encodeURIComponent(appConfig.sheetName)}`),
+                fetch(`${appConfig.scriptUrl}?action=getTeachers&spreadsheetId=${encodeURIComponent(appConfig.spreadsheetId)}&sheetName=${encodeURIComponent(appConfig.sheetName)}`),
+                fetch(`${appConfig.scriptUrl}?action=getStaff&spreadsheetId=${encodeURIComponent(appConfig.spreadsheetId)}&sheetName=${encodeURIComponent(appConfig.sheetName)}`)
+            ])
+            .then(responses => Promise.all(responses.map(res => res.json())))
+            .then(([adminsData, studentsData, teachersData, staffData]) => {
+                usersList = [];
+                
+                if (adminsData.status === "success" && adminsData.admins) {
+                    usersList = usersList.concat(adminsData.admins.map(admin => ({
+                        ...admin,
+                        isStudent: false,
+                        isTeacher: false,
+                        isStaff: false
+                    })));
+                }
+                
+                if (studentsData.status === "success" && studentsData.students) {
+                    usersList = usersList.concat(studentsData.students.map(student => ({
+                        ...student,
+                        isStudent: true,
+                        isTeacher: false,
+                        isStaff: false
+                    })));
+                }
+                
+                if (teachersData.status === "success" && teachersData.teachers) {
+                    usersList = usersList.concat(teachersData.teachers.map(teacher => ({
+                        ...teacher,
+                        isStudent: false,
+                        isTeacher: true,
+                        isStaff: false
+                    })));
+                }
+
+                if (staffData.status === "success" && staffData.staff) {
+                    usersList = usersList.concat(staffData.staff.map(staff => ({
+                        ...staff,
+                        isStudent: false,
+                        isTeacher: false,
+                        isStaff: true
+                    })));
+                }
+                
+                updateModal.style.display = 'flex';
+                updateUserType.value = '';
+                updateUserName.innerHTML = '<option value="" selected disabled>Select User</option>';
+                updateUserName.disabled = true;
+                document.getElementById('selectedUserBranch').textContent = '';
+            })
+            .catch(error => {
+                showMessage('Error fetching user data: ' + error.message, 'error');
+            })
+            .finally(() => {
+                updateBtn.disabled = false;
+                updateBtnSpinner.style.display = 'none';
+                updateBtnText.style.display = 'inline';
+                overlay.style.display = 'none';
+            });
+        });
+        
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            updateModal.style.display = 'none';
+        });
+        
+        cancelUpdate.addEventListener('click', function() {
+            updateModal.style.display = 'none';
+        });
+
+        // Admin form submission
+        adminSubmitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const adminName = document.getElementById('adminName').value;
+            const password = document.getElementById('adminPassword').value;
+            const branch = document.getElementById('branch').value;
+            
+            if (!adminName || !password || !branch) {
+                showMessage('Please fill all admin fields', 'error');
+                return;
+            }
+            
+            const formData = {
+                action: "submit",
+                config: appConfig,
+                type: "admin",
+                adminName: adminName,
+                password: password,
+                branch: branch
+            };
+            
+            adminSubmitSpinner.style.display = 'block';
+            adminSubmitText.textContent = 'Processing...';
+            adminSubmitBtn.disabled = true;
+            overlay.style.display = 'flex';
+            
+            fetch(appConfig.scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                showMessage('Admin data submitted successfully!', 'success');
+                accountForm.reset();
+                adminFields.style.display = 'none';
+                adminSubmitBtn.style.display = 'none';
+                userTypeSelect.value = '';
+            })
+            .catch(error => {
+                showMessage('Error submitting admin data: ' + error.message, 'error');
+            })
+            .finally(() => {
+                adminSubmitSpinner.style.display = 'none';
+                adminSubmitText.textContent = 'Submit Admin';
+                adminSubmitBtn.disabled = false;
+                overlay.style.display = 'none';
+            });
+        });
+
+        // Student form submission
+        studentSubmitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            const password = document.getElementById('studentPassword').value;
+            const branch = document.getElementById('studentBranch').value;
+            
+            if (!studentName || !password || !branch) {
+                showMessage('Please fill all student fields', 'error');
+                return;
+            }
+            
+            const formData = {
+                action: "submit",
+                config: appConfig,
+                type: "student",
+                studentName: studentName,
+                password: password,
+                branch: branch
+            };
+            
+            studentSubmitSpinner.style.display = 'block';
+            studentSubmitText.textContent = 'Processing...';
+            studentSubmitBtn.disabled = true;
+            overlay.style.display = 'flex';
+            
+            fetch(appConfig.scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                showMessage('Student data submitted successfully!', 'success');
+                accountForm.reset();
+                studentFields.style.display = 'none';
+                studentSubmitBtn.style.display = 'none';
+                userTypeSelect.value = '';
+            })
+            .catch(error => {
+                showMessage('Error submitting student data: ' + error.message, 'error');
+            })
+            .finally(() => {
+                studentSubmitSpinner.style.display = 'none';
+                studentSubmitText.textContent = 'Submit Student';
+                studentSubmitBtn.disabled = false;
+                overlay.style.display = 'none';
+            });
+        });
+
+        // Teacher form submission
+        teacherSubmitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const teacherName = document.getElementById('teacherName').value;
+            const password = document.getElementById('teacherPassword').value;
+            const branch = document.getElementById('teacherBranch').value;
+            
+            if (!teacherName || !password || !branch) {
+                showMessage('Please fill all teacher fields', 'error');
+                return;
+            }
+            
+            const formData = {
+                action: "submit",
+                config: appConfig,
+                type: "teacher",
+                teacherName: teacherName,
+                password: password,
+                branch: branch
+            };
+            
+            teacherSubmitSpinner.style.display = 'block';
+            teacherSubmitText.textContent = 'Processing...';
+            teacherSubmitBtn.disabled = true;
+            overlay.style.display = 'flex';
+            
+            fetch(appConfig.scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                showMessage('Teacher data submitted successfully!', 'success');
+                accountForm.reset();
+                teacherFields.style.display = 'none';
+                teacherSubmitBtn.style.display = 'none';
+                userTypeSelect.value = '';
+            })
+            .catch(error => {
+                showMessage('Error submitting teacher data: ' + error.message, 'error');
+            })
+            .finally(() => {
+                teacherSubmitSpinner.style.display = 'none';
+                teacherSubmitText.textContent = 'Submit Teacher';
+                teacherSubmitBtn.disabled = false;
+                overlay.style.display = 'none';
+            });
+        });
+
+        // Staff form submission
+        staffSubmitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const staffName = document.getElementById('staffName').value;
+            const password = document.getElementById('staffPassword').value;
+            const branch = document.getElementById('staffBranch').value;
+            
+            if (!staffName || !password || !branch) {
+                showMessage('Please fill all staff fields', 'error');
+                return;
+            }
+            
+            const formData = {
+                action: "submit",
+                config: appConfig,
+                type: "staff",
+                staffName: staffName,
+                password: password,
+                branch: branch
+            };
+            
+            staffSubmitSpinner.style.display = 'block';
+            staffSubmitText.textContent = 'Processing...';
+            staffSubmitBtn.disabled = true;
+            overlay.style.display = 'flex';
+            
+            fetch(appConfig.scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                showMessage('Staff data submitted successfully!', 'success');
+                accountForm.reset();
+                staffFields.style.display = 'none';
+                staffSubmitBtn.style.display = 'none';
+                userTypeSelect.value = '';
+            })
+            .catch(error => {
+                showMessage('Error submitting staff data: ' + error.message, 'error');
+            })
+            .finally(() => {
+                staffSubmitSpinner.style.display = 'none';
+                staffSubmitText.textContent = 'Submit Staff';
+                staffSubmitBtn.disabled = false;
+                overlay.style.display = 'none';
+            });
+        });
+
+        // Update password form submission
+        updateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userType = updateUserType.value;
+            const userName = updateUserName.value;
+            const newPassword = document.getElementById('newPassword').value;
+            
+            if (!userType || !userName || !newPassword) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+            
+            updateSpinner.style.display = 'block';
+            updateText.textContent = 'Updating...';
+            confirmUpdateBtn.disabled = true;
+            overlay.style.display = 'flex';
+            
+            const formData = {
+                action: "updatePassword",
+                config: appConfig,
+                type: userType.toLowerCase(),
+                username: userName,
+                newPassword: newPassword
+            };
+            
+            fetch(appConfig.scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // In no-cors mode, we can't read the response, so we assume success
+                showMessage('Password updated successfully!', 'success');
+                updateForm.reset();
+                updateModal.style.display = 'none';
+            })
+            .catch(error => {
+                showMessage('Error updating password. Please check your connection and try again.', 'error');
+            })
+            .finally(() => {
+                updateSpinner.style.display = 'none';
+                updateText.textContent = 'Update';
+                confirmUpdateBtn.disabled = false;
+                overlay.style.display = 'none';
+            });
+        });
+        
+        function showMessage(message, type) {
+            messageDiv.textContent = message;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+    });
+	
+	// Password toggle functionality
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Password strength indicator
+        function checkPasswordStrength(password, strengthId) {
+            const strengthIndicator = document.getElementById(strengthId);
+            let strength = 0;
+            
+            if (password.length === 0) {
+                strengthIndicator.className = 'password-strength';
+                return;
+            }
+            
+            if (password.length > 5) strength++;
+            if (password.length > 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            if (strength < 2) {
+                strengthIndicator.className = 'password-strength weak';
+            } else if (strength < 4) {
+                strengthIndicator.className = 'password-strength medium';
+            } else {
+                strengthIndicator.className = 'password-strength strong';
+            }
+        }
+        
+        // Add event listeners for password strength
+        document.getElementById('adminPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value, 'adminPasswordStrength');
+        });
+        
+        document.getElementById('studentPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value, 'studentPasswordStrength');
+        });
+        
+        document.getElementById('teacherPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value, 'teacherPasswordStrength');
+        });
+        
+        document.getElementById('staffPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value, 'staffPasswordStrength');
+        });
+        
+        document.getElementById('newPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value, 'newPasswordStrength');
+        });
+</script>
+</body>
+</html>
