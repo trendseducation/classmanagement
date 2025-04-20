@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>11th Commerce Admission Form</title>
+    <title>E-Gyan Teacher Payment Form</title>
     <link
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
@@ -392,7 +392,7 @@
     <div class="form-group">
       <label for="stream">Course: <span style="color: red;">*</span></label>
       <div class="position-relative">
-        <select class="form-control" name="Stream" id="stream" required>
+        <select class="form-control" name="Course" id="stream" required>
            <option value="">Select Course</option>
                 <option value="Basic (CCC)">Basic (CCC)</option>
                 <option value="Tally">Tally</option>
@@ -482,7 +482,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-     // Configuration constants
+// Configuration constants
 const scriptURL = "https://script.google.com/macros/s/AKfycbwD-29kpCjkWmA4G0GdHC1IXpbF7GaCpZb5NN-ufwiUO9y12QPIVRYdIHmFmeWUHEx9/exec";
 const SPREADSHEET_ID = '1sM1xjoZ3XoDcNAJjL8c3JUT6T1-dc8lx7MTP_56dCkw';
 const sheetName = "Teacher_Payment";
@@ -526,21 +526,9 @@ async function fetchExistingRecords() {
 // Check if teacher already exists in the sheet
 async function checkTeacherExists(teacherName) {
     try {
-        // Show checking spinner
-        const originalContent = teacherNameDisplay.innerHTML;
-        teacherNameDisplay.innerHTML = `
-            <span class="checking-status">
-                <span class="checking-spinner"></span>
-                Verifying teacher...
-            </span>
-        `;
-        
         const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
         const response = await fetch(url);
         const data = await response.json();
-        
-        // Restore original content
-        teacherNameDisplay.innerHTML = originalContent;
         
         if (data && data.records) {
             // Check for exact match (case insensitive and trimmed)
@@ -581,15 +569,6 @@ form.addEventListener("submit", async (e) => {
         return;
     }
     
-    // Validate paid lectures don't exceed total lectures
-    const totalLectures = parseInt(document.getElementById('editTlecture').value);
-    const paidLectures = parseInt(document.getElementById('editTPaidLec').value);
-    
-    if (paidLectures > totalLectures) {
-        showErrorPopup('Paid lectures cannot exceed total lectures');
-        return;
-    }
-    
     // Immediately show spinner and disable button
     submitOverlay.style.display = "flex";
     submitButton.disabled = true;
@@ -598,7 +577,9 @@ form.addEventListener("submit", async (e) => {
         // Check if teacher already exists
         const teacherExists = await checkTeacherExists(teacherName);
         if (teacherExists) {
-            return; // Error message already shown by checkTeacherExists
+            submitOverlay.style.display = "none";
+            submitButton.disabled = false;
+            return;
         }
         
         // If teacher doesn't exist, proceed with submission
@@ -618,10 +599,6 @@ form.addEventListener("submit", async (e) => {
         // Reset the teacher name display
         teacherNameDisplay.textContent = 'Select Teacher Name';
         teacherNameInput.value = '';
-        // Reset calculated fields
-        document.getElementById('totalPayment').value = '';
-        document.getElementById('totalPaid').value = '';
-        document.getElementById('balanceAmount').value = '';
         // Set date back to today
         document.getElementById("date").value = new Date().toISOString().split('T')[0];
         
@@ -629,8 +606,6 @@ form.addEventListener("submit", async (e) => {
     } catch (error) {
         showErrorPopup('Something went wrong. Please try again!');
         console.error('Submission error:', error);
-        // Restore the teacher name display in case of error
-        teacherNameDisplay.textContent = teacherName;
     } finally {
         submitOverlay.style.display = "none";
         submitButton.disabled = false;
@@ -644,15 +619,6 @@ function showSuccessPopup(message) {
         text: message,
         icon: 'success',
         confirmButtonText: 'OK'
-    });
-}
-
-// Show error popup
-function showErrorPopup(message) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: message,
     });
 }
 
@@ -690,29 +656,8 @@ async function fetchTeacherNames() {
                 div.textContent = name;
                 div.onclick = async function() {
                     document.getElementById("popup").style.display = "none";
-                    const originalContent = teacherNameDisplay.innerHTML;
-                    teacherNameDisplay.innerHTML = `
-                        <span class="checking-status">
-                            <span class="checking-spinner"></span>
-                            Verifying teacher...
-                        </span>
-                    `;
-                    
-                    try {
-                        const teacherExists = await checkTeacherExists(name);
-                        if (teacherExists) {
-                            teacherNameDisplay.textContent = 'Select Teacher Name';
-                            teacherNameInput.value = '';
-                        } else {
-                            teacherNameDisplay.textContent = name;
-                            teacherNameInput.value = name;
-                        }
-                    } catch (error) {
-                        console.error("Error checking teacher:", error);
-                        teacherNameDisplay.textContent = 'Select Teacher Name';
-                        teacherNameInput.value = '';
-                        showErrorPopup("Error checking teacher. Please try again.");
-                    }
+                    teacherNameDisplay.textContent = name;
+                    teacherNameInput.value = name;
                 };
                 studentList.appendChild(div);
             });
@@ -731,28 +676,28 @@ async function fetchTeacherNames() {
     }
 }
 
- // Add these popup functions
-        function showErrorPopup(message) {
-            const popup = document.getElementById('errorPopup');
-            const popupMessage = document.getElementById('popupMessage');
-            
-            popupMessage.textContent = message;
-            popup.style.display = 'flex';
-            
-            // Close popup when clicking outside
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
-                    hideErrorPopup();
-                }
-            });
-            
-            // Close button event
-            document.getElementById('closePopupBtn').addEventListener('click', hideErrorPopup);
+// Error popup functions
+function showErrorPopup(message) {
+    const popup = document.getElementById('errorPopup');
+    const popupMessage = document.getElementById('popupMessage');
+    
+    popupMessage.textContent = message;
+    popup.style.display = 'flex';
+    
+    // Close popup when clicking outside
+    popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+            hideErrorPopup();
         }
-        
-        function hideErrorPopup() {
-            document.getElementById('errorPopup').style.display = 'none';
-        }
-  </script>
+    });
+    
+    // Close button event
+    document.getElementById('closePopupBtn').addEventListener('click', hideErrorPopup);
+}
+
+function hideErrorPopup() {
+    document.getElementById('errorPopup').style.display = 'none';
+}
+</script>
   </body>
 </html>
