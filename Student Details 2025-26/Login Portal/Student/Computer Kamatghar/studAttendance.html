@@ -1322,6 +1322,14 @@
 
             summaryHeader.innerHTML = `<i class="fas fa-chart-pie"></i> This ${monthMap[sheetName] || "Attendance"}`;
         }
+
+	    function preventBack() {
+    window.history.forward();
+}
+setTimeout("preventBack()", 0);
+window.onunload = function () {
+    null
+};
     </script>
 </body>
 </html>
