@@ -803,6 +803,13 @@ function initHeaderBar() {
     }
 }
 
+// Add this at the beginning of your script
+if (sessionStorage.getItem('justLoggedOut') === 'true') {
+    sessionStorage.removeItem('justLoggedOut');
+} else {
+    checkRememberedUser(); // Only check remembered user if not coming from logout
+}
+
 // Optimized selectLoginType function
 function selectLoginType(role) {
     currentLoginType = role;
@@ -863,8 +870,13 @@ function clearCredentials(role) {
     localStorage.removeItem(`remembered_${role}`);
 }
 
-// Check for remembered user and auto-login
 function checkRememberedUser() {
+    // Only proceed if not coming from logout
+    if (sessionStorage.getItem('justLoggedOut') === 'true') {
+        sessionStorage.removeItem('justLoggedOut');
+        return;
+    }
+
     const roles = ['admin', 'student', 'teacher', 'staff'];
     for (const role of roles) {
         const rememberedData = JSON.parse(localStorage.getItem(`remembered_${role}`));
