@@ -621,6 +621,37 @@
             font-weight: 600;
             color: var(--dark-color);
         }
+		
+		/* Add these new styles to your existing CSS */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.remember-me input {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.remember-me label {
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+}
+
+.input-group {
+    position: relative;
+}
     </style>
 </head>
 <body>
@@ -679,6 +710,12 @@
         <div class="input-group">
             <i class="fas fa-lock input-icon"></i>
             <input type="password" id="loginPassword" class="input-field" placeholder="Enter Password">
+            <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+        </div>
+        
+        <div class="remember-me">
+            <input type="checkbox" id="rememberMe">
+            <label for="rememberMe">Remember me</label>
         </div>
         
         <button class="login-btn" onclick="validateLogin()">
@@ -726,6 +763,8 @@ const config = {
 const domCache = {
     loginName: document.getElementById('loginName'),
     loginPassword: document.getElementById('loginPassword'),
+    togglePassword: document.getElementById('togglePassword'),
+    rememberMe: document.getElementById('rememberMe'),
     spinner: document.getElementById('spinnerOverlay'),
     loginTitle: document.getElementById('loginTitle'),
     popup: document.getElementById('popupMessage'),
@@ -742,17 +781,25 @@ const domCache = {
 let currentLoginType = 'admin';
 let isMobile = window.innerWidth <= 992;
 
+// Toggle password visibility
+domCache.togglePassword.addEventListener('click', function() {
+    const type = domCache.loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+    domCache.loginPassword.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+});
+
 // Initialize the header bar based on screen size
 function initHeaderBar() {
     isMobile = window.innerWidth <= 992;
     if (isMobile) {
         domCache.headerBar.style.display = 'flex';
         domCache.sidebar.style.transform = 'translateX(-100%)';
-        domCache.sidebar.classList.remove('active'); // Ensure sidebar is not active initially
+        domCache.sidebar.classList.remove('active');
     } else {
         domCache.headerBar.style.display = 'none';
         domCache.sidebar.style.transform = 'translateX(0)';
-        domCache.sidebar.classList.add('active'); // Mark sidebar as active on desktop
+        domCache.sidebar.classList.add('active');
     }
 }
 
@@ -781,8 +828,66 @@ function selectLoginType(role) {
     domCache.loginTitle.textContent = roleTitles[role][0];
     nameInput.placeholder = roleTitles[role][1];
     
+    // Load remembered credentials if available
+    loadRememberedCredentials(role);
+    
     // Close sidebar if on mobile
     if (isMobile) closeSidebar();
+}
+
+// Load remembered credentials from localStorage
+function loadRememberedCredentials(role) {
+    const rememberedData = JSON.parse(localStorage.getItem(`remembered_${role}`));
+    if (rememberedData) {
+        domCache.loginName.value = rememberedData.username;
+        domCache.loginPassword.value = rememberedData.password;
+        domCache.rememberMe.checked = true;
+    } else {
+        domCache.rememberMe.checked = false;
+    }
+}
+
+// Save credentials to localStorage
+function saveCredentials(role, username, password) {
+    const data = {
+        username: username,
+        password: password,
+        loginType: role,
+        timestamp: new Date().getTime()
+    };
+    localStorage.setItem(`remembered_${role}`, JSON.stringify(data));
+}
+
+// Clear saved credentials
+function clearCredentials(role) {
+    localStorage.removeItem(`remembered_${role}`);
+}
+
+// Check for remembered user and auto-login
+function checkRememberedUser() {
+    const roles = ['admin', 'student', 'teacher', 'staff'];
+    for (const role of roles) {
+        const rememberedData = JSON.parse(localStorage.getItem(`remembered_${role}`));
+        if (rememberedData) {
+            // Check if data is not older than 30 days
+            const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+            if (new Date().getTime() - rememberedData.timestamp < thirtyDays) {
+                currentLoginType = role;
+                domCache.loginName.value = rememberedData.username;
+                domCache.loginPassword.value = rememberedData.password;
+                domCache.rememberMe.checked = true;
+                
+                // Auto-login after a short delay
+                setTimeout(() => {
+                    validateLogin();
+                }, 500);
+                return;
+            } else {
+                // Clear expired data
+                clearCredentials(role);
+            }
+        }
+    }
 }
 
 function toggleSidebar() {
@@ -790,7 +895,6 @@ function toggleSidebar() {
     domCache.sidebarOverlay.classList.toggle('active', wasActive);
     document.body.style.overflow = wasActive ? 'hidden' : 'auto';
     
-    // Sync transform with active state for mobile
     if (isMobile) {
         domCache.sidebar.style.transform = wasActive ? 'translateX(0)' : 'translateX(-100%)';
     }
@@ -801,7 +905,6 @@ function closeSidebar() {
     domCache.sidebarOverlay.classList.remove('active');
     document.body.style.overflow = 'auto';
     
-    // Ensure sidebar is translated off-screen on mobile when closed
     if (isMobile) {
         domCache.sidebar.style.transform = 'translateX(-100%)';
     }
@@ -822,7 +925,7 @@ window.addEventListener('resize', () => {
 });
 
 async function validateLogin() {
-    const { loginName, loginPassword, spinner } = domCache;
+    const { loginName, loginPassword, spinner, rememberMe } = domCache;
     const name = loginName.value.trim();
     const password = loginPassword.value.trim();
 
@@ -835,7 +938,6 @@ async function validateLogin() {
         spinner.style.display = "flex";
         const columnConfig = config.columns[currentLoginType];
         
-        // Construct URL more efficiently
         const params = new URLSearchParams({
             action: 'validateLogin',
             name: name,
@@ -856,6 +958,13 @@ async function validateLogin() {
             return;
         }
 
+        // Handle remember me functionality
+        if (rememberMe.checked) {
+            saveCredentials(currentLoginType, name, password);
+        } else {
+            clearCredentials(currentLoginType);
+        }
+
         // Fetch passcode
         const passcodeParams = new URLSearchParams({
             action: 'getPasscode',
@@ -873,7 +982,6 @@ async function validateLogin() {
             domCache.successPopup.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            // Single event listener with cleanup
             const continueHandler = () => {
                 domCache.successPopup.style.display = 'none';
                 document.body.style.overflow = 'auto';
@@ -883,7 +991,6 @@ async function validateLogin() {
             
             domCache.continueBtn.addEventListener('click', continueHandler);
             
-            // Auto-redirect
             setTimeout(() => {
                 if (domCache.successPopup.style.display !== 'none') {
                     continueHandler();
@@ -903,13 +1010,16 @@ function handleSuccessfulLogin(name, branch) {
     const userBranch = branch ? branch.toString().trim().toLowerCase() : '';
     const encodedName = encodeURIComponent(name);
     const branchUrls = {
-        kamatghar: {
+        'account': {
+            admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/AccountPortal.html',
+        },
+        'kamatghar': {
             admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminKamatghar.html',
             student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Kamatghar/studDashboard.html?studentName=${encodedName}`,
             teacher: `Practice7.html?teacherName=${encodedName}`,
             staff: `Practice10.html?staffName=${encodedName}`
         },
-        naka: {
+        'naka': {
             admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminNaka.html',
             student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Naka/studDashboard.html?studentName=${encodedName}`,
             teacher: `Practice8.html?teacherName=${encodedName}`,
@@ -921,20 +1031,21 @@ function handleSuccessfulLogin(name, branch) {
             teacher: `Practice9.html?teacherName=${encodedName}`,
             staff: `Practice12.html?staffName=${encodedName}`
         },
-        mithpada: {
+        'mithpada': {
             admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminMithpada.html',
             student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Mithpada/studDashboard.html?studentName=${encodedName}`,
             teacher: `Pract4.html?teacherName=${encodedName}`,
             staff: `Pract5.html?staffName=${encodedName}`
         }
     };
-    
 
-    const url = branchUrls[userBranch]?.[currentLoginType];
+    const normalizedBranch = userBranch.toLowerCase();
+    const url = branchUrls[normalizedBranch]?.[currentLoginType];
+    
     if (url) {
         window.location.href = url;
     } else {
-        showPopup(`Access restricted branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
+        showPopup(`Access restricted - branches not clarified. Your branch: ${branch || "Not specified"}`, "error");
     }
 }
 
@@ -965,6 +1076,7 @@ window.onunload = function () {
 document.addEventListener('DOMContentLoaded', function() {
     initHeaderBar();
     document.getElementById('adminBtn').classList.add('active');
+    checkRememberedUser();
 });
 </script>
 </body>
