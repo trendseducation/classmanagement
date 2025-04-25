@@ -602,7 +602,7 @@
                     <button class="btn btn-primary" onclick="redirectToPage3()">
                         <i class="fas fa-book-open"></i> Study Material
                     </button>
-                    <button class="btn btn-danger" onclick="logout()">
+                    <button class="btn btn-danger" onclick="handleLogout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
@@ -830,10 +830,19 @@
             window.location.href = "page3.html?studentName=" + encodeURIComponent(studentName);
         }
 
-        // Logout and redirect to login page
-        function logout() {
-            window.location.href = "https://trendseducation.github.io/classmanagement/";
-        }
+        function handleLogout() {
+  // Set flag to prevent auto-login on the login page
+  sessionStorage.setItem('justLoggedOut', 'true');
+  
+  // Clear any remembered credentials if needed
+  const roles = ['admin', 'student', 'teacher', 'staff'];
+  roles.forEach(role => {
+    localStorage.removeItem(`remembered_${role}`);
+  });
+
+  // Redirect to login page
+  window.location.href = "https://trendseducation.github.io/classmanagement/";
+}
 
          // Load data for both desktop and mobile
         function loadStudentData() {
