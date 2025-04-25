@@ -420,14 +420,6 @@
   window.location.href = "https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/";
 }
 
-// Update the checkRememberedUser function in your login page script:
-function checkRememberedUser() {
-  // Only proceed if not coming from logout
-  if (sessionStorage.getItem('justLoggedOut') === 'true') {
-    sessionStorage.removeItem('justLoggedOut');
-    return;
-  }
-
    	 function preventBack() {
         window.history.forward();
     }
