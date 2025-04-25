@@ -727,12 +727,18 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <button type="button" class="btn btn-secondary" id="updateBtn">
-                    <span class="spinner" id="updateBtnSpinner"></span>
-                    <span id="updateBtnText"><i class="fas fa-key"></i> Update Password</span>
-                </button>
-            </div>
+            <div class="form-group" style="display: flex; gap: 15px; margin-top: 20px;">
+    <button type="button" class="btn btn-secondary" id="updateBtn" style="flex: 1; background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%); border: none; box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);">
+        <span class="spinner" id="updateBtnSpinner"></span>
+        <span id="updateBtnText"><i class="fas fa-key"></i> Update Password</span>
+    </button>
+    <button type="button" class="btn btn-secondary" id="LoginAgain" 
+        style="flex: 1; background: linear-gradient(135deg, #4bb543 0%, #3a9e32 100%); border: none; box-shadow: 0 4px 8px rgba(75, 181, 67, 0.3);"
+        onclick="handleLogout()">
+    <span class="spinner" id="updateBtnSpinner"></span>
+    <span id="LoginAgainText"><i class="fas fa-sign-in-alt"></i> Go to Login</span>
+</button>
+</div>
             
             <div class="message" id="message"></div>
         </form>
@@ -1543,6 +1549,29 @@
             // Initialize the application
             init();
         });
+		
+		// Enhanced logout handler with loading state
+function handleLogout() {
+    const btn = document.getElementById('LoginAgain');
+    const spinner = document.getElementById('updateBtnSpinner');
+    const text = document.getElementById('LoginAgainText');
+    
+    // Show loading state
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    text.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logging out...';
+    
+    // Set logout flag and clear credentials
+    sessionStorage.setItem('justLoggedOut', 'true');
+    ['admin', 'student', 'teacher', 'staff'].forEach(role => {
+        localStorage.removeItem(`remembered_${role}`);
+    });
+    
+    // Delay redirect to show feedback
+    setTimeout(() => {
+        window.location.href = "https://trendseducation.github.io/classmanagement/";
+    }, 800);
+}
     </script>
 </body>
 </html>
