@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       const studentName = getStudentNameFromUrl();
       if (!studentName) {
-        showError('Student name not provided in URL. Add ?student=NAME to the URL');
+        showError('Student name not provided in URL. Add ?studentName=NAME to the URL');
         return;
       }
 
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Rest of the helper functions remain the same...
   function getStudentNameFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('student')?.trim();
+    return urlParams.get('studentName')?.trim();
   }
 
   function showLoading(show) {
