@@ -352,124 +352,125 @@
     </style>
   </head>
   <body>
-		<div class="form-container">
-  <h4 class="text-center">Teacher Payment Form</h4>
-  <form id="teacherPaymentForm">
-    <div class="form-group">
-      <label for="text_dropdown">Academic Year:<span style="color: red;">*</span></label>
-      <div class="position-relative">
-        <select class="form-control" name="Academic_Year" id="text_dropdown" required>
-          <option value="">Select</option>
-          <option value="2025-26">2025-26</option>
-          <option value="2026-27">2026-27</option>
-        </select>
-        <i class="fas fa-calendar-alt input-icon"></i>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="date">Date of Payment: <span style="color: red;">*</span></label>
-      <div class="position-relative">
-        <input
-          class="form-control"
-          type="date"
-          name="Date_of_Payment"
-          id="date"
-          required
-        />
-        <i class="fas fa-calendar-alt input-icon"></i>
-      </div>
-    </div>
-	
-	<div class="form-group">
-      <label for="text_dropdown">Teacher Name: <span style="color: red;">*</span></label>
-      <div class="position-relative">
-        <div class="form-control2" onclick="openPopup()" name="Name_of_Student_display" id="Name_of_Student_display" readonly required>Select Teacher Name</div>
-        <input type="hidden" name="Teacher_Name" id="Name_of_Student" required>
-        <i class="fas fa-user input-icon"></i>
-      </div>
-    </div>
-	
-    <div class="form-group">
-      <label for="stream">Course: <span style="color: red;">*</span></label>
-      <div class="position-relative">
-        <select class="form-control" name="Course" id="stream" required>
-           <option value="">Select Course</option>
-                <option value="Basic (CCC)">Basic (CCC)</option>
-                <option value="Tally">Tally</option>
-                <option value="CCC + Tally">CCC + Tally</option>
-                <option value="Advance Excel">Advance Excel</option>
-				<option value="Management">Management</option>
-				<option value="Advance Excel">Other</option>
-				</select>
-        <i class="fas fa-graduation-cap input-icon"></i>
-      </div>
-    </div>
-	<div class="form-group">
-            <label for="Compatible_Subject">Other Course Name:</label>
-            <div class="position-relative">
-			<input
-              class="form-control"
-              type="text"
-              name="Compatible_Subject"
-              id="Compatible_Subject"
-              placeholder="Enter Other Course Name"
-            />
-			<i class="fas fa-book input-icon"></i>
-			</div></div>
-    <div class="form-group">
-      <label for="editTlecture">Expenses Amount: <span style="color: red;">*</span></label>
-      <div class="position-relative">
-        <input
-          class="form-control"
-          type="number"
-          name="Expenses_Amount"
-          id="editTlecture"
-          placeholder="Enter Expenses Amount (e.g., 500)"
-          min="0"
-          required
-        />
-        <i class="fas fa-rupee-sign input-icon"></i>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="Note">Any Note:</label>
-      <div class="position-relative">
-        <textarea
-          class="form-control"
-          name="Note"
-          id="Note"
-          placeholder="Type Any Notes if Require"
-        ></textarea>
-        <i class="fas fa-sticky-note input-icon"></i>
-      </div>
+    <div class="form-container">
+        <h4 class="text-center">Teacher Payment Form</h4>
+        <form id="teacherPaymentForm">
+            <div class="form-group">
+                <label for="text_dropdown">Academic Year:<span style="color: red;">*</span></label>
+                <div class="position-relative">
+                    <select class="form-control" name="Academic_Year" id="text_dropdown" required>
+                        <option value="">Select</option>
+                        <option value="2025-26">2025-26</option>
+                        <option value="2026-27">2026-27</option>
+                    </select>
+                    <i class="fas fa-calendar-alt input-icon"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="date">Date of Payment: <span style="color: red;">*</span></label>
+                <div class="position-relative">
+                    <input
+                        class="form-control"
+                        type="date"
+                        name="Date_of_Payment"
+                        id="date"
+                        required
+                    />
+                    <i class="fas fa-calendar-alt input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="text_dropdown">Teacher Name: <span style="color: red;">*</span></label>
+                <div class="position-relative">
+                    <div class="form-control2" onclick="openPopup()" name="Name_of_Student_display" id="Name_of_Student_display" readonly required>Select Teacher Name</div>
+                    <input type="hidden" name="Teacher_Name" id="Name_of_Student" required>
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="stream">Course: <span style="color: red;">*</span></label>
+                <div class="position-relative">
+                    <select class="form-control" name="Course" id="stream" required>
+                        <option value="">Select Course</option>
+                        <option value="Basic (CCC)">Basic (CCC)</option>
+                        <option value="Tally">Tally</option>
+                        <option value="CCC + Tally">CCC + Tally</option>
+                        <option value="Advance Excel">Advance Excel</option>
+                        <option value="Management">Management</option>
+                        <option value="Advance Excel">Other</option>
+                    </select>
+                    <i class="fas fa-graduation-cap input-icon"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Compatible_Subject">Other Course Name:</label>
+                <div class="position-relative">
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="Compatible_Subject"
+                        id="Compatible_Subject"
+                        placeholder="Enter Other Course Name"
+                    />
+                    <i class="fas fa-book input-icon"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editTlecture">Expenses Amount: <span style="color: red;">*</span></label>
+                <div class="position-relative">
+                    <input
+                        class="form-control"
+                        type="number"
+                        name="Expenses_Amount"
+                        id="editTlecture"
+                        placeholder="Enter Expenses Amount (e.g., 500)"
+                        min="0"
+                        required
+                    />
+                    <i class="fas fa-rupee-sign input-icon"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Note">Any Note:</label>
+                <div class="position-relative">
+                    <textarea
+                        class="form-control"
+                        name="Note"
+                        id="Note"
+                        placeholder="Type Any Notes if Require"
+                    ></textarea>
+                    <i class="fas fa-sticky-note input-icon"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submitButton">
+                Submit
+            </button>
+        </form>
+        
+        <!-- Overlay for submission loading -->
+        <div class="submit-overlay" id="submitOverlay" style="display: none;">
+            <div class="spinner-container">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div class="spinner-text">Submitting your data...</div>
+            </div>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-block" id="submitButton">
-      Submit
-    </button>
-  </form>
-  
-  <!-- Overlay for submission loading -->
-  <div class="submit-overlay" id="submitOverlay" style="display: none;">
-    <div class="spinner-container">
-      <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <div class="spinner-text">Submitting your data...</div>
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h3>Select Teacher Name</h3>
+            <div class="studspinner" id="spinner"><i class="fas fa-spinner fa-spin"></i> Please Wait...</div>
+            <div class="student-list" id="studentList"></div>
+        </div>
     </div>
-  </div>
-</div>
 
-<div class="popup" id="popup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="closePopup()">&times;</span>
-        <h3>Select Teacher Name</h3>
-        <div class="studspinner" id="spinner"><i class="fas fa-spinner fa-spin"></i> Please Wait...</div>
-        <div class="student-list" id="studentList"></div>
-    </div>
-</div>
-
-<!-- Add this popup HTML at the bottom of your body -->
+    <!-- Add this popup HTML at the bottom of your body -->
     <div class="popup-overlay" id="errorPopup">
         <div class="popup-content">
             <div class="popup-message" id="popupMessage"></div>
@@ -480,224 +481,187 @@
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-// Configuration constants
-const scriptURL = "https://script.google.com/macros/s/AKfycbwD-29kpCjkWmA4G0GdHC1IXpbF7GaCpZb5NN-ufwiUO9y12QPIVRYdIHmFmeWUHEx9/exec";
-const SPREADSHEET_ID = '1sM1xjoZ3XoDcNAJjL8c3JUT6T1-dc8lx7MTP_56dCkw';
-const sheetName = "Teacher_Payment";
-const sheetName2 = "Teacher_Details";
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Configuration constants
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwD-29kpCjkWmA4G0GdHC1IXpbF7GaCpZb5NN-ufwiUO9y12QPIVRYdIHmFmeWUHEx9/exec";
+        const SPREADSHEET_ID = '1sM1xjoZ3XoDcNAJjL8c3JUT6T1-dc8lx7MTP_56dCkw';
+        const sheetName = "Teacher_Payment";
+        const sheetName2 = "Teacher_Details";
 
-// DOM elements
-const form = document.getElementById("teacherPaymentForm");
-const submitButton = document.getElementById("submitButton");
-const submitOverlay = document.getElementById("submitOverlay");
-const teacherNameDisplay = document.getElementById("Name_of_Student_display");
-const teacherNameInput = document.getElementById("Name_of_Student");
+        // DOM elements
+        const form = document.getElementById("teacherPaymentForm");
+        const submitButton = document.getElementById("submitButton");
+        const submitOverlay = document.getElementById("submitOverlay");
+        const teacherNameDisplay = document.getElementById("Name_of_Student_display");
+        const teacherNameInput = document.getElementById("Name_of_Student");
 
-// Store existing records
-let existingRecords = [];
+        // Store existing records
+        let existingRecords = [];
 
-// Initialize when page loads
-document.addEventListener("DOMContentLoaded", function() {
-    // Set default date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("date").value = today;
-    
-    // Fetch existing records
-    fetchExistingRecords();
-});
-
-// Fetch existing records from Google Sheet
-async function fetchExistingRecords() {
-    try {
-        const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data && data.records) {
-            existingRecords = data.records;
-        }
-    } catch (error) {
-        console.error("Error fetching records:", error);
-    }
-}
-
-// Check if teacher already exists in the sheet
-async function checkTeacherExists(teacherName) {
-    try {
-        const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data && data.records) {
-            // Check for exact match (case insensitive and trimmed)
-            const exists = data.records.some(record => 
-                record.Teacher_Name && 
-                record.Teacher_Name.toLowerCase().trim() === teacherName.toLowerCase().trim()
-            );
+        // Initialize when page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("date").value = today;
             
-            if (exists) {
-                showErrorPopup('This teacher already has a payment record. Please update the existing record instead.');
-                return true;
+            // Fetch existing records
+            fetchExistingRecords();
+        });
+
+        // Fetch existing records from Google Sheet
+        async function fetchExistingRecords() {
+            try {
+                const url = `${scriptURL}?action=getRecords&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data && data.records) {
+                    existingRecords = data.records;
+                }
+            } catch (error) {
+                console.error("Error fetching records:", error);
             }
         }
-        return false;
-    } catch (error) {
-        console.error("Error checking teacher:", error);
-        teacherNameDisplay.textContent = 'Select Teacher Name';
-        teacherNameInput.value = '';
-        showErrorPopup('Error verifying teacher. Please try again.');
-        return false;
-    }
-}
 
-// Form submission handler
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-    
-    // Validate teacher name is selected
-    const teacherName = teacherNameInput.value;
-    if (!teacherName || teacherName === '') {
-        showErrorPopup('Please select a teacher name');
-        return;
-    }
-    
-    // Immediately show spinner and disable button
-    submitOverlay.style.display = "flex";
-    submitButton.disabled = true;
-    
-    try {
-        // Check if teacher already exists
-        const teacherExists = await checkTeacherExists(teacherName);
-        if (teacherExists) {
-            submitOverlay.style.display = "none";
-            submitButton.disabled = false;
-            return;
-        }
-        
-        // If teacher doesn't exist, proceed with submission
-        const formData = new FormData(form);
-        formData.append("sheetName", sheetName);
-        formData.append("spreadsheetId", SPREADSHEET_ID);
-
-        const response = await fetch(scriptURL, { 
-            method: "POST", 
-            body: formData 
-        });
-        
-        if (!response.ok) throw new Error("Network response was not ok");
-        
-        showSuccessPopup('Payment record submitted successfully!');
-        form.reset();
-        // Reset the teacher name display
-        teacherNameDisplay.textContent = 'Select Teacher Name';
-        teacherNameInput.value = '';
-        // Set date back to today
-        document.getElementById("date").value = new Date().toISOString().split('T')[0];
-        
-        await fetchExistingRecords();
-    } catch (error) {
-        showErrorPopup('Something went wrong. Please try again!');
-        console.error('Submission error:', error);
-    } finally {
-        submitOverlay.style.display = "none";
-        submitButton.disabled = false;
-    }
-});
-
-// Show success popup
-function showSuccessPopup(message) {
-    Swal.fire({
-        title: 'Success!',
-        text: message,
-        icon: 'success',
-        confirmButtonText: 'OK'
-    });
-}
-
-function openPopup() {
-    document.getElementById("popup").style.display = "flex";
-    fetchTeacherNames();
-}
-
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-}
-
-async function fetchTeacherNames() {
-    document.getElementById("spinner").style.display = "block";
-    document.getElementById("studentList").style.display = "none";
-
-    try {
-        const response = await fetch(`${scriptURL}?action=getColumnBData&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName2}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-
-        let studentList = document.getElementById("studentList");
-        studentList.innerHTML = "";
-
-        if (Array.isArray(data)) {
-            // Remove duplicates and sort alphabetically
-            const uniqueNames = [...new Set(data.filter(name => name && name.trim() !== ''))].sort();
+        // Form submission handler
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
             
-            uniqueNames.forEach(name => {
-                let div = document.createElement("div");
-                div.textContent = name;
-                div.onclick = async function() {
-                    document.getElementById("popup").style.display = "none";
-                    teacherNameDisplay.textContent = name;
-                    teacherNameInput.value = name;
-                };
-                studentList.appendChild(div);
+            // Validate form
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // Validate teacher name is selected
+            const teacherName = teacherNameInput.value;
+            if (!teacherName || teacherName === '') {
+                showErrorPopup('Please select a teacher name');
+                return;
+            }
+            
+            // Immediately show spinner and disable button
+            submitOverlay.style.display = "flex";
+            submitButton.disabled = true;
+            
+            try {
+                // Proceed with submission
+                const formData = new FormData(form);
+                formData.append("sheetName", sheetName);
+                formData.append("spreadsheetId", SPREADSHEET_ID);
+
+                const response = await fetch(scriptURL, { 
+                    method: "POST", 
+                    body: formData 
+                });
+                
+                if (!response.ok) throw new Error("Network response was not ok");
+                
+                showSuccessPopup('Payment record submitted successfully!');
+                form.reset();
+                // Reset the teacher name display
+                teacherNameDisplay.textContent = 'Select Teacher Name';
+                teacherNameInput.value = '';
+                // Set date back to today
+                document.getElementById("date").value = new Date().toISOString().split('T')[0];
+                
+                await fetchExistingRecords();
+            } catch (error) {
+                showErrorPopup('Something went wrong. Please try again!');
+                console.error('Submission error:', error);
+            } finally {
+                submitOverlay.style.display = "none";
+                submitButton.disabled = false;
+            }
+        });
+
+        // Show success popup
+        function showSuccessPopup(message) {
+            Swal.fire({
+                title: 'Success!',
+                text: message,
+                icon: 'success',
+                confirmButtonText: 'OK'
             });
-        } else {
-            throw new Error(data.error || "Unknown error occurred");
         }
 
-        document.getElementById("spinner").style.display = "none";
-        studentList.style.display = "block";
-
-    } catch (error) {
-        console.error("Error fetching teacher names:", error);
-        showErrorPopup("Error fetching teacher names: " + error.message);
-        document.getElementById("spinner").style.display = "none";
-        closePopup();
-    }
-}
-
-// Error popup functions
-function showErrorPopup(message) {
-    const popup = document.getElementById('errorPopup');
-    const popupMessage = document.getElementById('popupMessage');
-    
-    popupMessage.textContent = message;
-    popup.style.display = 'flex';
-    
-    // Close popup when clicking outside
-    popup.addEventListener('click', function(e) {
-        if (e.target === popup) {
-            hideErrorPopup();
+        function openPopup() {
+            document.getElementById("popup").style.display = "flex";
+            fetchTeacherNames();
         }
-    });
-    
-    // Close button event
-    document.getElementById('closePopupBtn').addEventListener('click', hideErrorPopup);
-}
 
-function hideErrorPopup() {
-    document.getElementById('errorPopup').style.display = 'none';
-}
-</script>
-  </body>
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        async function fetchTeacherNames() {
+            document.getElementById("spinner").style.display = "block";
+            document.getElementById("studentList").style.display = "none";
+
+            try {
+                const response = await fetch(`${scriptURL}?action=getColumnBData&spreadsheetId=${SPREADSHEET_ID}&sheetName=${sheetName2}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+
+                let studentList = document.getElementById("studentList");
+                studentList.innerHTML = "";
+
+                if (Array.isArray(data)) {
+                    // Remove duplicates and sort alphabetically
+                    const uniqueNames = [...new Set(data.filter(name => name && name.trim() !== ''))].sort();
+                    
+                    uniqueNames.forEach(name => {
+                        let div = document.createElement("div");
+                        div.textContent = name;
+                        div.onclick = async function() {
+                            document.getElementById("popup").style.display = "none";
+                            teacherNameDisplay.textContent = name;
+                            teacherNameInput.value = name;
+                        };
+                        studentList.appendChild(div);
+                    });
+                } else {
+                    throw new Error(data.error || "Unknown error occurred");
+                }
+
+                document.getElementById("spinner").style.display = "none";
+                studentList.style.display = "block";
+
+            } catch (error) {
+                console.error("Error fetching teacher names:", error);
+                showErrorPopup("Error fetching teacher names: " + error.message);
+                document.getElementById("spinner").style.display = "none";
+                closePopup();
+            }
+        }
+
+        // Error popup functions
+        function showErrorPopup(message) {
+            const popup = document.getElementById('errorPopup');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            popupMessage.textContent = message;
+            popup.style.display = 'flex';
+            
+            // Close popup when clicking outside
+            popup.addEventListener('click', function(e) {
+                if (e.target === popup) {
+                    hideErrorPopup();
+                }
+            });
+            
+            // Close button event
+            document.getElementById('closePopupBtn').addEventListener('click', hideErrorPopup);
+        }
+
+        function hideErrorPopup() {
+            document.getElementById('errorPopup').style.display = 'none';
+        }
+    </script>
+</body>
 </html>
