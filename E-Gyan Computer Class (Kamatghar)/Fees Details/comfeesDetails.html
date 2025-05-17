@@ -1055,8 +1055,8 @@
 </div>
    <script>
   const scriptURL = "https://script.google.com/macros/s/AKfycbwD-29kpCjkWmA4G0GdHC1IXpbF7GaCpZb5NN-ufwiUO9y12QPIVRYdIHmFmeWUHEx9/exec";
-  const SPREADSHEET_ID = '17W3uI55kaecrshN3k5Fsd7XjMtsJeQen5GiSiz4qZis';
-  const sheetName = "Computer";
+  const SPREADSHEET_ID = '1f-e_pKpTBqf00FERmfx3YzGryarVKpIVTXOHqRT43j8';
+  const sheetName = "6th_Std";
 
 // Lottie Animations
 const successAnimation = "https://assets10.lottiefiles.com/packages/lf20_5tkzkblw.json"; // Replace with your Lottie URL
@@ -1416,7 +1416,7 @@ async function loadDetails(rowIndex) {
                            // Istallment 1 Next Installment Date 1 with date format
 				
 				(() => {
-    const rawDates_NInsDate1 = rowData[32]; // Extract raw date from rowData[32]
+    const rawDates_NInsDate1 = rowData[33]; // Extract raw date from rowData[33]
     const detailsNInsDate1Element = document.getElementById("detailsNInsDate1");
 
     // Check if the raw date exists and is not empty
@@ -1678,7 +1678,7 @@ async function loadDetails(rowIndex) {
            // Istallment 2 Next Installment Date 2 with date format
 				
 				(() => {
-    const rawDates_NInsDate2 = rowData[33]; // Extract raw date from rowData[33]
+    const rawDates_NInsDate2 = rowData[34]; // Extract raw date from rowData[34]
     const detailsNInsDate2Element = document.getElementById("detailsNInsDate2");
 
     // Check if the raw date exists and is not empty
@@ -1942,7 +1942,7 @@ async function loadDetails(rowIndex) {
       // Istallment 3 Next Installment Date 3 with date format
 				
 				(() => {
-    const rawDates_NInsDate3 = rowData[34]; // Extract raw date from rowData[34]
+    const rawDates_NInsDate3 = rowData[35]; // Extract raw date from rowData[35]
     const detailsNInsDate3Element = document.getElementById("detailsNInsDate3");
 
     // Check if the raw date exists and is not empty
@@ -2205,7 +2205,7 @@ async function loadDetails(rowIndex) {
             // Istallment 4 Next Installment Date 4 with date format
 				
 				(() => {
-    const rawDates_NInsDate4 = rowData[35]; // Extract raw date from rowData[35]
+    const rawDates_NInsDate4 = rowData[36]; // Extract raw date from rowData[36]
     const detailsNInsDate4Element = document.getElementById("detailsNInsDate4");
 
     // Check if the raw date exists and is not empty
@@ -2607,14 +2607,14 @@ function loadEditForm(rowIndex) {
                                setValue("editName", rowData[1]);
                                setValue("editStream", rowData[2]);
 							   
-							   // Installment 1
+			// Installment 1
                                setValue("receipt-no-1", rowData[3]);
                                setValue("receipt-date-1", parseAndFormatDate(rowData[4]));
                                setValue("payment-mode-1", rowData[5]);
                                setValue("transaction-1", rowData[6]);
                                setValue("transaction-bank-1", rowData[37]);
                                setValue("transaction-tell-1", rowData[38]);
-                               setValue("Next-Ins-date1", parseAndFormatDate(rowData[32]));
+                               setValue("Next-Ins-date1", parseAndFormatDate(rowData[33]));
                                setValue("amount-1", rowData[7]);
             // Installment 2
                                setValue("receipt-no-2", rowData[8]);
@@ -2623,7 +2623,7 @@ function loadEditForm(rowIndex) {
                                setValue("transaction-2", rowData[11]);
                                setValue("transaction-bank-2", rowData[39]);
                                setValue("transaction-tell-2", rowData[40]);
-                               setValue("Next-Ins-date2", parseAndFormatDate(rowData[33]));
+                               setValue("Next-Ins-date2", parseAndFormatDate(rowData[34]));
                                setValue("amount-2", rowData[12]);
             // Installment 3
 			                   setValue("receipt-no-3", rowData[13]);
@@ -2632,7 +2632,7 @@ function loadEditForm(rowIndex) {
                                setValue("transaction-3", rowData[16]);
                                setValue("transaction-bank-3", rowData[41]);
                                setValue("transaction-tell-3", rowData[42]);
-                               setValue("Next-Ins-date3", parseAndFormatDate(rowData[34]));
+                               setValue("Next-Ins-date3", parseAndFormatDate(rowData[35]));
                                setValue("amount-3", rowData[17]);			
 			// Installment 4
 			                   setValue("receipt-no-4", rowData[18]);
@@ -2641,7 +2641,7 @@ function loadEditForm(rowIndex) {
                                setValue("transaction-4", rowData[21]);
                                setValue("transaction-bank-4", rowData[43]);
                                setValue("transaction-tell-4", rowData[44]);
-                               setValue("Next-Ins-date4", parseAndFormatDate(rowData[35]));
+                               setValue("Next-Ins-date4", parseAndFormatDate(rowData[36]));
                                setValue("amount-4", rowData[22]);			
 			// Installment 5
 			                   setValue("receipt-no-5", rowData[23]);
@@ -2759,7 +2759,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
                             { row: selectedRowData, col: 7, value: updatedData.transaction1 },
 		                	{ row: selectedRowData, col: 38, value: updatedData.transactionbank1 },
 		                	{ row: selectedRowData, col: 39, value: updatedData.transactiontell1 },
-		                	{ row: selectedRowData, col: 33, value: updatedData.nextinsdate1 },
+		                	{ row: selectedRowData, col: 34, value: updatedData.nextinsdate1 },
 		                	{ row: selectedRowData, col: 8, value: updatedData.amount1 },			
 			//Installment 2
 			                { row: selectedRowData, col: 9, value: updatedData.receipt2 },
@@ -2768,7 +2768,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
                             { row: selectedRowData, col: 12, value: updatedData.transaction2 },
 		                	{ row: selectedRowData, col: 40, value: updatedData.transactionbank2 },
 		                	{ row: selectedRowData, col: 41, value: updatedData.transactiontell2 },
-		                	{ row: selectedRowData, col: 34, value: updatedData.nextinsdate2 },
+		                	{ row: selectedRowData, col: 35, value: updatedData.nextinsdate2 },
 		                	{ row: selectedRowData, col: 13, value: updatedData.amount2 },			
             //Installment 3
                             { row: selectedRowData, col: 14, value: updatedData.receipt3 },
@@ -2777,7 +2777,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
                             { row: selectedRowData, col: 17, value: updatedData.transaction3 },
 		                	{ row: selectedRowData, col: 42, value: updatedData.transactionbank3 },
 		                	{ row: selectedRowData, col: 43, value: updatedData.transactiontell3 },
-		                	{ row: selectedRowData, col: 35, value: updatedData.nextinsdate3 },
+		                	{ row: selectedRowData, col: 36, value: updatedData.nextinsdate3 },
 		                	{ row: selectedRowData, col: 18, value: updatedData.amount3 },
 			//Installment 4
                             { row: selectedRowData, col: 19, value: updatedData.receipt4 },
@@ -2786,7 +2786,7 @@ document.getElementById("editForm").addEventListener('submit', async (e) => {
                             { row: selectedRowData, col: 22, value: updatedData.transaction4 },
 		                	{ row: selectedRowData, col: 44, value: updatedData.transactionbank4 },
 		                	{ row: selectedRowData, col: 45, value: updatedData.transactiontell4 },
-		                	{ row: selectedRowData, col: 36, value: updatedData.nextinsdate4 },
+		                	{ row: selectedRowData, col: 37, value: updatedData.nextinsdate4 },
 		                	{ row: selectedRowData, col: 23, value: updatedData.amount4 },
 			//Installment 5
                             { row: selectedRowData, col: 24, value: updatedData.receipt5 },
