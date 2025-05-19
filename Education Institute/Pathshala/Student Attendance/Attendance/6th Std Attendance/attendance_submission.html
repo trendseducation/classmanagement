@@ -694,6 +694,14 @@
         submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Attendance';
       });
     }
+
+ function preventBack() {
+    window.history.forward();
+}
+setTimeout("preventBack()", 0);
+window.onunload = function () {
+    null
+};
     
     // Initial setup on page load.
     window.onload = function() {
