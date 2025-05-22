@@ -1025,6 +1025,12 @@ function handleSuccessfulLogin(name, branch) {
         'account': {
             admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/AccountPortal.html',
         },
+		'demo': {
+            admin: 'https://trendseducation.github.io/classmanagement/Education%20Institute/Demo%20Class/Login%20Details/AdminDemo.html',
+            student: `https://trendseducation.github.io/classmanagement/Education%20Institute/Demo%20Class/Login%20Details/Student/studDashboard.html?studentName=${encodedName}`,
+            teacher: `Practice7.html?teacherName=${encodedName}`,
+            staff: `Practice10.html?staffName=${encodedName}`
+        },
         'kamatghar': {
             admin: 'https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Admin/adminKamatghar.html',
             student: `https://trendseducation.github.io/classmanagement/Student%20Details%202025-26/Login%20Portal/Student/Kamatghar/studDashboard.html?studentName=${encodedName}`,
