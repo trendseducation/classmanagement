@@ -580,7 +580,7 @@ tr:hover {
     </style>
 </head>
 <body>
-    <div class="container">
+   <div class="container">
     <header>
         <h2><i class="fas fa-graduation-cap"></i> Student Test Records</h2>
         <p>View and manage student Test records</p>
@@ -651,440 +651,413 @@ tr:hover {
     </div>
 </div>
 
-   <script>
-    // Replace this with your deployed Google Apps Script web app URL
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbw052wCLxhKn6mXKKTNkUxe1IBecWG9_ZHWjzyGzHcHrgabpfpBOGX__Hf2dExntKGB/exec";
+<script>
+   // Replace this with your deployed Google Apps Script web app URL
+const scriptUrl = "https://script.google.com/macros/s/AKfycby0RQo2xUkQebklTLnxTLoXulQV_7nZV0PTMFV-gaCXhzuv3ngk0fol3HkYAx6l1k8/exec";
 
-    // Spreadsheet configuration
-    const spreadsheetConfig = {
-        spreadsheetId: "18rDjV1Qcsc-HAAc9E-Bxb4MswHpSg7aNskwuQAfvsBw",
-        sheets: ["11th_Com", "12th_Com", "6th_Std", "7th_Std", "8th_Std", "9th_Std", "10th_Std"], // All sheets to fetch
-        columns: {
-            date: 1,        // Column A (1-based index)
-            studentName: 2, // Column B
-            chapterName: 3, // Column C
-            attendance: 4,  // Column D
-            english: 5,    // Column E
-            hindi: 6,      // Column F
-            marathi: 7,    // Column G
-            bkAccountancy: 8, // Column H
-            ocManagement: 9,  // Column I
-            economy: 10,    // Column J
-            sp: 11,         // Column K (Secretarial Practice)
-            mathp1:12,
-            mathp2: 13,      // Column L
-            totalObtained: 14, // Column M
-            totalMarks: 15, // Column N
-            percentage: 16, // Column O
-            result: 17,     // Column P
-            note: 18        // Column Q
-        }
-    };
+// Spreadsheet configuration
+const spreadsheetConfig = {
+    spreadsheetId: "19OctyhO2MoeSloLX5cmWaFBVCjgB9jhdaeQeOCD4BDQ",
+    sheets: ["11th_Com", "12th_Com", "11th_Sci", "12th_Sci", "8th_Std", "9th_Std", "10th_Std"],
+    columns: {
+        date: 1,
+        studentName: 2,
+        chapterName: 3,
+        attendance: 4,
+        english: 5,
+        hindi: 6,
+        marathi: 7,
+        bkAccountancy: 8,    // Science: Biology | School: Science | Commerce: BK & Accountancy
+        ocManagement: 9,     // Science: Physics | School: History | Commerce: OC & Management
+        economy: 10,         // Science: Chemistry | School: Geography | Commerce: Economy
+        sp: 11,              // Science: Geography | Commerce: Secretarial Practice
+        mathp1: 12,
+        mathp2: 13,
+        totalObtained: 14,
+        totalMarks: 15,
+        percentage: 16,
+        result: 17,
+        note: 18
+    }
+};
 
-    let allData = [];
-    let filteredData = [];
-    let currentPage = 1;
-    const rowsPerPage = 10;
-    let sortColumn = null;
-    let sortDirection = 1; // 1 for ascending, -1 for descending
+let allData = [];
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 10;
+let sortColumn = null;
+let sortDirection = 1;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the page
-        loadData();
-        
-        // Set up event listeners
-        document.getElementById('streamFilter').addEventListener('change', filterData);
-        
-        // Make search automatic (no need for refresh button)
-        document.getElementById('searchInput').addEventListener('input', filterData);
-        document.getElementById('dateFilter').addEventListener('change', filterData);
-        
-        // Set up sorting
-        document.querySelectorAll('th').forEach((th, index) => {
-            th.addEventListener('click', () => {
-                sortColumn = index;
-                sortDirection = sortColumn === index ? -sortDirection : 1;
-                sortData();
-                renderTable();
-            });
-        });
-        
-        // Modal close handlers
-        document.querySelector('.close-btn').addEventListener('click', closeModal);
-        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-        window.addEventListener('click', function(event) {
-            if (event.target === document.getElementById('detailsModal')) {
-                closeModal();
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+    
+    document.getElementById('streamFilter').addEventListener('change', filterData);
+    document.getElementById('searchInput').addEventListener('input', filterData);
+    document.getElementById('dateFilter').addEventListener('change', filterData);
+    
+    document.querySelectorAll('th').forEach((th, index) => {
+        th.addEventListener('click', () => {
+            sortColumn = index;
+            sortDirection = sortColumn === index ? -sortDirection : 1;
+            sortData();
+            renderTable();
         });
     });
+    
+    document.querySelector('.close-btn').addEventListener('click', closeModal);
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    window.addEventListener('click', function(event) {
+        if (event.target === document.getElementById('detailsModal')) {
+            closeModal();
+        }
+    });
+});
 
-    function showLoading() {
-        document.getElementById('loadingSpinner').style.display = 'flex';
-    }
+function showLoading() {
+    document.getElementById('loadingSpinner').style.display = 'flex';
+}
 
-    function hideLoading() {
-        document.getElementById('loadingSpinner').style.display = 'none';
-    }
+function hideLoading() {
+    document.getElementById('loadingSpinner').style.display = 'none';
+}
 
-    function loadData() {
-        showLoading();
-        allData = []; // Clear existing data
-        
-        // Create an array of promises for each sheet
-        const fetchPromises = spreadsheetConfig.sheets.map(sheetName => {
-            return fetch(`${scriptUrl}?spreadsheetId=${encodeURIComponent(spreadsheetConfig.spreadsheetId)}&sheetName=${encodeURIComponent(sheetName)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch data from ${sheetName}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        console.error(`Error in ${sheetName}:`, data.error);
-                        return [];
-                    }
-                    // Add class/year info to each record
-                    return data.map(item => {
-                        // Extract class/year from sheet name (e.g., "11th_Com" -> "11th Commerce")
-                        const classInfo = sheetName.replace('_', ' ');
-                        return [...item, classInfo]; // Add class info as a new column
-                    });
-                })
-                .catch(error => {
-                    console.error(`Error loading ${sheetName}:`, error);
+function loadData() {
+    showLoading();
+    allData = [];
+    
+    const fetchPromises = spreadsheetConfig.sheets.map(sheetName => {
+        return fetch(`${scriptUrl}?spreadsheetId=${encodeURIComponent(spreadsheetConfig.spreadsheetId)}&sheetName=${encodeURIComponent(sheetName)}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`Failed to fetch data from ${sheetName}`);
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    console.error(`Error in ${sheetName}:`, data.error);
                     return [];
-                });
-        });
-        
-        // Wait for all sheets to load
-        Promise.all(fetchPromises)
-            .then(results => {
-                // Combine all sheet data into one array
-                allData = results.flat();
-                filterData();
-                hideLoading();
+                }
+                return data.map(item => [...item, sheetName.replace('_', ' ')]);
             })
             .catch(error => {
-                console.error('Error loading data:', error);
-                hideLoading();
-                alert('Error loading data. Please try again.');
+                console.error(`Error loading ${sheetName}:`, error);
+                return [];
             });
-    }
+    });
+    
+    Promise.all(fetchPromises)
+        .then(results => {
+            allData = results.flat();
+            filterData();
+            hideLoading();
+        })
+        .catch(error => {
+            console.error('Error loading data:', error);
+            hideLoading();
+            alert('Error loading data. Please try again.');
+        });
+}
 
-    function filterData() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const selectedDate = document.getElementById('dateFilter').value;
-        const selectedStream = document.getElementById('streamFilter').value;
+function filterData() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const selectedDate = document.getElementById('dateFilter').value;
+    const selectedStream = document.getElementById('streamFilter').value;
+    
+    filteredData = allData.filter(item => {
+        const studentName = item[spreadsheetConfig.columns.studentName - 1]?.toString().toLowerCase() || '';
+        const dateValue = item[spreadsheetConfig.columns.date - 1];
+        const stream = item[18] || '';
         
-        filteredData = allData.filter(item => {
-            const studentName = item[spreadsheetConfig.columns.studentName - 1]?.toString().toLowerCase() || '';
-            const dateValue = item[spreadsheetConfig.columns.date - 1];
-            const stream = item[17] || ''; // Class/stream info is in the 18th column (index 17)
+        const matchesSearch = studentName.includes(searchTerm);
+        
+        let matchesDate = true;
+        if (selectedDate) {
+            const itemDate = new Date(dateValue);
+            const filterDate = new Date(selectedDate);
+            matchesDate = itemDate.toDateString() === filterDate.toDateString();
+        }
+        
+        let matchesStream = true;
+        if (selectedStream) {
+            matchesStream = stream === selectedStream;
+        }
+        
+        return matchesSearch && matchesDate && matchesStream;
+    });
+    
+    currentPage = 1;
+    renderTable();
+    renderPagination();
+}
+
+function sortData() {
+    if (sortColumn !== null) {
+        filteredData.sort((a, b) => {
+            let dataColumn;
+            if (sortColumn === 0) dataColumn = spreadsheetConfig.columns.date - 1;
+            else if (sortColumn === 1) dataColumn = spreadsheetConfig.columns.studentName - 1;
+            else if (sortColumn === 2) dataColumn = spreadsheetConfig.columns.attendance - 1;
             
-            const matchesSearch = studentName.includes(searchTerm);
+            let valA = a[dataColumn];
+            let valB = b[dataColumn];
             
-            let matchesDate = true;
-            if (selectedDate) {
-                const itemDate = new Date(dateValue);
-                const filterDate = new Date(selectedDate);
-                matchesDate = itemDate.toDateString() === filterDate.toDateString();
+            if (dataColumn === spreadsheetConfig.columns.date - 1) {
+                valA = new Date(valA).getTime();
+                valB = new Date(valB).getTime();
+            } else {
+                valA = valA?.toString().toLowerCase() || '';
+                valB = valB?.toString().toLowerCase() || '';
             }
             
-            let matchesStream = true;
-            if (selectedStream) {
-                matchesStream = stream === selectedStream;
-            }
-            
-            return matchesSearch && matchesDate && matchesStream;
+            if (valA < valB) return -1 * sortDirection;
+            if (valA > valB) return 1 * sortDirection;
+            return 0;
         });
-        
-        currentPage = 1;
-        renderTable();
-        renderPagination();
     }
+}
 
-    function sortData() {
-        if (sortColumn !== null) {
-            filteredData.sort((a, b) => {
-                // Map sort column index to the correct data column
-                let dataColumn;
-                if (sortColumn === 0) dataColumn = spreadsheetConfig.columns.date - 1;
-                else if (sortColumn === 1) dataColumn = spreadsheetConfig.columns.studentName - 1;
-                else if (sortColumn === 2) dataColumn = spreadsheetConfig.columns.attendance - 1;
-                
-                let valA = a[dataColumn];
-                let valB = b[dataColumn];
-                
-                // Special handling for dates
-                if (dataColumn === spreadsheetConfig.columns.date - 1) {
-                    valA = new Date(valA).getTime();
-                    valB = new Date(valB).getTime();
-                } else {
-                    // Case-insensitive string comparison
-                    valA = valA?.toString().toLowerCase() || '';
-                    valB = valB?.toString().toLowerCase() || '';
-                }
-                
-                if (valA < valB) return -1 * sortDirection;
-                if (valA > valB) return 1 * sortDirection;
-                return 0;
-            });
-        }
+function renderTable() {
+    const tableBody = document.getElementById('tableBody');
+    const noDataDiv = document.getElementById('noData');
+    
+    if (filteredData.length === 0) {
+        tableBody.innerHTML = '';
+        noDataDiv.style.display = 'block';
+        return;
     }
-
-    function renderTable() {
-        const tableBody = document.getElementById('tableBody');
-        const noDataDiv = document.getElementById('noData');
-        
-        if (filteredData.length === 0) {
-            tableBody.innerHTML = '';
-            noDataDiv.style.display = 'block';
-            return;
-        }
-        
-        noDataDiv.style.display = 'none';
-        
-        sortData();
-        
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-        const pageData = filteredData.slice(startIndex, endIndex);
-        
-        tableBody.innerHTML = pageData.map((item, index) => {
-            // Format date as "31 Mar 2025"
-            const dateObj = new Date(item[spreadsheetConfig.columns.date - 1]);
-            const formattedDate = dateObj.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            });
-            
-            const attendance = item[spreadsheetConfig.columns.attendance - 1];
-            const attendanceClass = attendance === 'Present' ? 'present' : 'absent';
-            const actionBtnClass = attendance === 'Present' ? 'get-result-btn' : 'reason-btn';
-            const actionBtnText = attendance === 'Present' ? 'Get Result' : 'Reason';
-            const classInfo = item[17] || ''; // Get the added class/year info
-            
-            return `
-                <tr>
-                    <td>${formattedDate}</td>
-                    <td>
-                        ${item[spreadsheetConfig.columns.studentName - 1]}
-                        <div class="class-info">${classInfo}</div>
-                    </td>
-                    <td class="${attendanceClass}">${attendance}</td>
-                    <td>
-                        <button class="action-btn ${actionBtnClass}" onclick="showDetails(${startIndex + index})">
-                            <i class="fas ${attendance === 'Present' ? 'fa-award' : 'fa-question-circle'}"></i> ${actionBtnText}
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-        
-        // Update sorting indicators
-        document.querySelectorAll('th i').forEach(icon => {
-            icon.className = 'fas fa-sort';
+    
+    noDataDiv.style.display = 'none';
+    sortData();
+    
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+    const pageData = filteredData.slice(startIndex, endIndex);
+    
+    tableBody.innerHTML = pageData.map((item, index) => {
+        const dateObj = new Date(item[spreadsheetConfig.columns.date - 1]);
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
         });
-        
-        if (sortColumn !== null) {
-            const th = document.querySelectorAll('th')[sortColumn];
-            const icon = th.querySelector('i');
-            icon.className = sortDirection === 1 ? 'fas fa-sort-up' : 'fas fa-sort-down';
-        }
-    }
-
-    function showDetails(index) {
-        const item = filteredData[index];
-        const modal = document.getElementById('detailsModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalBody = document.getElementById('modalBody');
         
         const attendance = item[spreadsheetConfig.columns.attendance - 1];
-        const studentName = item[spreadsheetConfig.columns.studentName - 1];
-        const testChapter = item[spreadsheetConfig.columns.chapterName - 1];
-        const stream = item[17] || '';
+        const attendanceClass = attendance === 'Present' ? 'present' : 'absent';
+        const actionBtnClass = attendance === 'Present' ? 'get-result-btn' : 'reason-btn';
+        const actionBtnText = attendance === 'Present' ? 'Get Result' : 'Reason';
+        const classInfo = item[18] || '';
         
-        modalTitle.textContent = `${studentName}'s ${attendance === 'Present' ? 'Test Results' : 'Absence Details'}`;
-        
-        if (attendance === 'Present') {
-            let percentage = item[spreadsheetConfig.columns.percentage - 1];
-            if (percentage && !isNaN(percentage)) {
-                if (percentage <= 1) {
-                    percentage = (percentage * 100).toFixed(2);
-                }
-                percentage += '%';
-            } else {
-                percentage = 'N/A';
-            }
-            
-            const result = item[spreadsheetConfig.columns.result - 1];
-            const resultClass = result && result.toString().toLowerCase().includes('pass') ? 'pass' : 'fail';
-            // Check if this is a school stream (6th-10th Std)
-            const isSchoolStream = stream.includes('6th Std') || 
-                                 stream.includes('7th Std') || 
-                                 stream.includes('8th Std') || 
-                                 stream.includes('9th Std') || 
-                                 stream.includes('10th Std');
-            
-            // Function to create subject row if value exists
-            const createSubjectRow = (subjectName, value) => {
-                if (value && value.toString().trim() !== '') {
-                    return `
-                        <tr>
-                            <td>${subjectName}</td>
-                            <td class="marks-cell">${value}</td>
-                        </tr>
-                    `;
-                }
-                return '';
-            };
-            
-            // Get all subject values
-            const english = item[spreadsheetConfig.columns.english - 1];
-            const hindi = item[spreadsheetConfig.columns.hindi - 1];
-            const marathi = item[spreadsheetConfig.columns.marathi - 1];
-            const mathp1 = item[spreadsheetConfig.columns.mathp1 - 1];
-            const mathp2 = item[spreadsheetConfig.columns.mathp2 - 1];
-            const sciOrBk = item[spreadsheetConfig.columns.bkAccountancy - 1];
-            const hisOrOc = item[spreadsheetConfig.columns.ocManagement - 1];
-            const geoOrEco = item[spreadsheetConfig.columns.economy - 1];
-            const Sp = item[spreadsheetConfig.columns.sp - 1];
-            
-            modalBody.innerHTML = `
-                <div class="test-chapter">
-                    <i class="fas fa-book-open"></i> Test Chapter: ${testChapter || 'N/A'}
-                    <span class="stream-badge">${stream}</span>
-                </div>
-                
-                <table class="details-table">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Marks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${createSubjectRow('English', english)}
-                        ${createSubjectRow('Hindi', hindi)}
-                        ${createSubjectRow('Marathi', marathi)}
-                        ${createSubjectRow('Maths Part 1', mathp1)}
-                        ${createSubjectRow('Maths Part 2', mathp2)}
-                        ${
-                            isSchoolStream
-                                ? `
-                                    ${createSubjectRow('Science', sciOrBk)}
-                                    ${createSubjectRow('History', hisOrOc)}
-                                    ${createSubjectRow('Geography', geoOrEco)}
-                                `
-                                : `
-                                    ${createSubjectRow('BK & Accountancy', sciOrBk)}
-                                    ${createSubjectRow('OC & Management', hisOrOc)}
-                                    ${createSubjectRow('Economy', geoOrEco)}
-                                    ${createSubjectRow('Secretarial Practice (SP)', Sp)}
-                                `
-                        }
-                    </tbody>
-                </table>
-                
-                <div class="result-summary">
-                    <div class="summary-row">
-                        <span><strong>Total Marks Obtained:</strong></span>
-                        <span>${item[spreadsheetConfig.columns.totalObtained - 1] || '-'}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span><strong>Total Marks:</strong></span>
-                        <span>${item[spreadsheetConfig.columns.totalMarks - 1] || '-'}</span>
-                    </div>
-                    <hr>
-                    <div class="summary-row">
-                        <span><strong>Percentage:</strong> ${percentage}</span>
-                        <span><strong>Result:</strong> <span class="${resultClass}">${result || '-'}</span></span>
-                    </div>
-                    <div style="text-align: center; margin-top: 15px; font-style: italic; color: #666;">
-                        ${item[spreadsheetConfig.columns.note - 1] || ''}
-                    </div>
-                </div>
-            `;
+        return `
+            <tr>
+                <td>${formattedDate}</td>
+                <td>
+                    ${item[spreadsheetConfig.columns.studentName - 1]}
+                    <div class="class-info">${classInfo}</div>
+                </td>
+                <td class="${attendanceClass}">${attendance}</td>
+                <td>
+                    <button class="action-btn ${actionBtnClass}" onclick="showDetails(${startIndex + index})">
+                        <i class="fas ${attendance === 'Present' ? 'fa-award' : 'fa-question-circle'}"></i> ${actionBtnText}
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    document.querySelectorAll('th i').forEach(icon => {
+        icon.className = 'fas fa-sort';
+    });
+    
+    if (sortColumn !== null) {
+        const th = document.querySelectorAll('th')[sortColumn];
+        const icon = th.querySelector('i');
+        icon.className = sortDirection === 1 ? 'fas fa-sort-up' : 'fas fa-sort-down';
+    }
+}
+
+function showDetails(index) {
+    const item = filteredData[index];
+    const modal = document.getElementById('detailsModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    
+    const attendance = item[spreadsheetConfig.columns.attendance - 1];
+    const studentName = item[spreadsheetConfig.columns.studentName - 1];
+    const testChapter = item[spreadsheetConfig.columns.chapterName - 1];
+    const stream = item[18] || '';
+    const note = item[spreadsheetConfig.columns.note - 1] || ''; // Corrected index
+    
+    modalTitle.textContent = `${studentName}'s ${attendance === 'Present' ? 'Test Results' : 'Absence Details'}`;
+    
+    if (attendance === 'Present') {
+        let percentage = item[spreadsheetConfig.columns.percentage - 1];
+        if (percentage && !isNaN(percentage)) {
+            if (percentage <= 1) percentage = (percentage * 100).toFixed(2);
+            percentage += '%';
         } else {
-            modalBody.innerHTML = `
-                <div class="test-chapter">
-                    <i class="fas fa-book-open"></i> Test Chapter: ${testChapter || 'N/A'}
-                    <span class="stream-badge">${stream}</span>
-                </div>
-                
-                <div class="absent-reason">
-                    <h4><i class="fas fa-exclamation-circle"></i> Reason for Absence</h4>
-                    <p>${item[spreadsheetConfig.columns.note - 1] || 'No reason provided'}</p>
-                </div>
-            `;
+            percentage = 'N/A';
         }
         
-        modal.style.display = 'block';
+        const result = item[spreadsheetConfig.columns.result - 1];
+        const resultClass = result && result.toString().toLowerCase().includes('pass') ? 'pass' : 'fail';
+        const isScienceStream = stream.includes('11th Sci') || stream.includes('12th Sci');
+        const isSchoolStream = stream.includes('8th Std') || stream.includes('9th Std') || stream.includes('10th Std');
+        
+        const createSubjectRow = (subjectName, value) => {
+            if (value && value.toString().trim() !== '') {
+                return `
+                    <tr>
+                        <td>${subjectName}</td>
+                        <td class="marks-cell">${value}</td>
+                    </tr>
+                `;
+            }
+            return '';
+        };
+        
+        const english = item[spreadsheetConfig.columns.english - 1];
+        const hindi = item[spreadsheetConfig.columns.hindi - 1];
+        const marathi = item[spreadsheetConfig.columns.marathi - 1];
+        const mathp1 = item[spreadsheetConfig.columns.mathp1 - 1];
+        const mathp2 = item[spreadsheetConfig.columns.mathp2 - 1];
+        const scienceOrPhysicsOrAccountancy = item[spreadsheetConfig.columns.bkAccountancy - 1];
+        const historyOrChemistryOrManagement = item[spreadsheetConfig.columns.ocManagement - 1];
+        const geographyOrGeographyOrEconomy = item[spreadsheetConfig.columns.economy - 1];
+        const spOrBio = item[spreadsheetConfig.columns.sp - 1];
+        
+        modalBody.innerHTML = `
+            <div class="test-chapter">
+                <i class="fas fa-book-open"></i> Test Chapter: ${testChapter || 'N/A'}
+                <span class="stream-badge">${stream}</span>
+            </div>
+            
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${createSubjectRow('English', english)}
+                    ${createSubjectRow('Hindi', hindi)}
+                    ${createSubjectRow('Marathi', marathi)}
+                    ${createSubjectRow('Maths Part 1', mathp1)}
+                    ${createSubjectRow('Maths Part 2', mathp2)}
+                    ${
+                        isScienceStream
+                            ? `
+                                ${createSubjectRow('Physics', scienceOrPhysicsOrAccountancy)}
+                                ${createSubjectRow('Chemistry', historyOrChemistryOrManagement)}
+                                ${createSubjectRow('Geography', geographyOrGeographyOrEconomy)}
+                                ${createSubjectRow('Biology', spOrBio)}
+                            `
+                            : isSchoolStream
+                            ? `
+                                ${createSubjectRow('Science', scienceOrPhysicsOrAccountancy)}
+                                ${createSubjectRow('History', historyOrChemistryOrManagement)}
+                                ${createSubjectRow('Geography', geographyOrGeographyOrEconomy)}
+                            `
+                            : `
+                                ${createSubjectRow('BK & Accountancy', scienceOrPhysicsOrAccountancy)}
+                                ${createSubjectRow('OC & Management', historyOrChemistryOrManagement)}
+                                ${createSubjectRow('Economy', geographyOrGeographyOrEconomy)}
+                                ${createSubjectRow('Secretarial Practice (SP)', spOrBio)}
+                            `
+                    }
+                </tbody>
+            </table>
+            
+             <div class="result-summary">
+                <div class="summary-row">
+                    <span><strong>Total Marks Obtained:</strong></span>
+                    <span>${item[spreadsheetConfig.columns.totalObtained - 1] || '-'}</span>
+                </div>
+                <div class="summary-row">
+                    <span><strong>Total Marks:</strong></span>
+                    <span>${item[spreadsheetConfig.columns.totalMarks - 1] || '-'}</span>
+                </div>
+                <hr>
+                <div class="summary-row">
+                    <span><strong>Percentage:</strong> ${percentage}</span>
+                    <span><strong>Result:</strong> <span class="${resultClass}">${result || '-'}</span></span>
+                </div>
+                <div style="text-align: center; margin-top: 15px; font-style: italic; color: #666;">
+                    ${note || '-'}
+                </div>
+            </div>
+        `;
+    } else {
+        modalBody.innerHTML = `
+            <div class="test-chapter">
+                <i class="fas fa-book-open"></i> Test Chapter: ${testChapter || 'N/A'}
+                <span class="stream-badge">${stream}</span>
+            </div>
+            
+            <div class="absent-reason">
+                <h4><i class="fas fa-exclamation-circle"></i> Reason for Absence</h4>
+                <p>${note || 'No reason provided'}</p>
+            </div>
+        `;
     }
+    
+    modal.style.display = 'block';
+}
 
-    function closeModal() {
-        document.getElementById('detailsModal').style.display = 'none';
+function closeModal() {
+    document.getElementById('detailsModal').style.display = 'none';
+}
+
+function renderPagination() {
+    const paginationDiv = document.getElementById('pagination');
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    
+    if (totalPages <= 1) {
+        paginationDiv.innerHTML = '';
+        return;
     }
-
-    function renderPagination() {
-        const paginationDiv = document.getElementById('pagination');
-        const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-        
-        if (totalPages <= 1) {
-            paginationDiv.innerHTML = '';
-            return;
-        }
-        
-        let paginationHTML = '';
-        
-        // Previous button
+    
+    let paginationHTML = '';
+    
+    paginationHTML += `
+        <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    `;
+    
+    for (let i = 1; i <= totalPages; i++) {
         paginationHTML += `
-            <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                <i class="fas fa-chevron-left"></i>
+            <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                ${i}
             </button>
         `;
-        
-        // Page numbers
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `
-                <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                    ${i}
-                </button>
-            `;
-        }
-        
-        // Next button
-        paginationHTML += `
-            <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        `;
-        
-        paginationDiv.innerHTML = paginationHTML;
     }
+    
+    paginationHTML += `
+        <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    `;
+    
+    paginationDiv.innerHTML = paginationHTML;
+}
 
-    function changePage(page) {
-        const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-        
-        if (page < 1 || page > totalPages) return;
-        
-        currentPage = page;
-        renderTable();
-        renderPagination();
-        
-        // Scroll to top of table
-        document.querySelector('.table-container').scrollIntoView({
-            behavior: 'smooth'
-        });
-    }
+function changePage(page) {
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    
+    if (page < 1 || page > totalPages) return;
+    
+    currentPage = page;
+    renderTable();
+    renderPagination();
+    
+    document.querySelector('.table-container').scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 
-    // Make functions available globally for HTML event handlers
-    window.changePage = changePage;
-    window.showDetails = showDetails;
-    window.closeModal = closeModal;
+window.changePage = changePage;
+window.showDetails = showDetails;
+window.closeModal = closeModal;
 </script>
 </body>
 </html>
